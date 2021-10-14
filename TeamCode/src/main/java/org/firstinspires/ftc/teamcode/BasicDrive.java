@@ -160,6 +160,11 @@ public class BasicDrive extends LinearOpMode {
             telemetry.addData("Power", basePower);
             telemetry.addData("Mode", tankDrive ? "Tank Drive" : "POV Drive");
             telemetry.update();
+
+            // Sleep to make the loop have more consistent timing
+            // Possibly have to remove if things are updating too slow
+            sleep(5);
+            idle();
         }
     }
 }
