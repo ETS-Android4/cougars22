@@ -73,17 +73,17 @@ public class BasicDrive extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftFrontMotor  = hardwareMap.get(DcMotor.class, "leftFront");
-        leftBackMotor = hardwareMap.get(DcMotor.class, "leftBack");
-        rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBackMotor = hardwareMap.get(DcMotor.class, "rightBack");
+        leftFrontMotor  = hardwareMap.tryGet(DcMotor.class, "leftFront");
+        leftBackMotor = hardwareMap.tryGet(DcMotor.class, "leftBack");
+        rightFrontMotor = hardwareMap.tryGet(DcMotor.class, "rightFront");
+        rightBackMotor = hardwareMap.tryGet(DcMotor.class, "rightBack");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftBackMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        if (leftFrontMotor != null) leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        if (leftBackMotor != null) leftBackMotor.setDirection(DcMotor.Direction.FORWARD);
+        if(rightFrontMotor != null) rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        if (rightBackMotor != null) rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -123,10 +123,10 @@ public class BasicDrive extends LinearOpMode {
             rightPower *= basePower;
 
             // Send calculated power to wheels
-            leftFrontMotor.setPower(leftPower);
-            leftBackMotor.setPower(leftPower);
-            rightFrontMotor.setPower(rightPower);
-            rightBackMotor.setPower(rightPower);
+            if (leftFrontMotor != null) leftFrontMotor.setPower(leftPower);
+            if (leftBackMotor != null) leftBackMotor.setPower(leftPower);
+            if (rightFrontMotor != null) rightFrontMotor.setPower(rightPower);
+            if (rightBackMotor != null) rightBackMotor.setPower(rightPower);
 
             // Switch modes
             if (gamepad1.dpad_up)
