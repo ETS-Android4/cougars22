@@ -106,7 +106,7 @@ public class BasicDrive extends LinearOpMode {
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
             if (tankDrive)
             {
-                leftPower = -gamepad1.left_stick_y;
+                leftPower =  gamepad1.left_stick_y;
                 rightPower = gamepad1.right_stick_y;
             }
             // POV Mode uses left stick to go forward, and right stick to turn.
