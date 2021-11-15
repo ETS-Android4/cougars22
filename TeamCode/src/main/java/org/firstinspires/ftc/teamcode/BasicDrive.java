@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -60,6 +61,7 @@ public class BasicDrive extends LinearOpMode {
     private DcMotor leftBackMotor = null;
     private DcMotor rightFrontMotor = null;
     private DcMotor rightBackMotor = null;
+    private DcMotor armMotor = null;
     private boolean tankDrive = true;
     private double basePower = 1;
     private double lastPowerChangeTime;
@@ -73,17 +75,35 @@ public class BasicDrive extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftFrontMotor  = hardwareMap.tryGet(DcMotor.class, "leftFront");
-        leftBackMotor = hardwareMap.tryGet(DcMotor.class, "leftBack");
-        rightFrontMotor = hardwareMap.tryGet(DcMotor.class, "rightFront");
-        rightBackMotor = hardwareMap.tryGet(DcMotor.class, "rightBack");
+        leftFrontMotor  = hardwareMap.get(DcMotor.class, "leftFront");
+        leftBackMotor = hardwareMap.get(DcMotor.class, "leftBack");
+        rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFront");
+        rightBackMotor = hardwareMap.get(DcMotor.class, "rightBack");
+        armMotor = hardwareMap.get(DcMotor.class, "arm");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        if (leftFrontMotor != null) leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        if (leftBackMotor != null) leftBackMotor.setDirection(DcMotor.Direction.FORWARD);
-        if(rightFrontMotor != null) rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        if (rightBackMotor != null) rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        //Reset encoders
+        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Set all motors to use encoders
+        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Set arm motor to break
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -98,6 +118,7 @@ public class BasicDrive extends LinearOpMode {
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
             double rightPower;
+            double armPower;
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -119,14 +140,18 @@ public class BasicDrive extends LinearOpMode {
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
             }
 
+            armPower = (gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0);
+
             leftPower *= basePower;
             rightPower *= basePower;
+            armPower *= basePower;
 
             // Send calculated power to wheels
-            if (leftFrontMotor != null) leftFrontMotor.setPower(leftPower);
-            if (leftBackMotor != null) leftBackMotor.setPower(leftPower);
-            if (rightFrontMotor != null) rightFrontMotor.setPower(rightPower);
-            if (rightBackMotor != null) rightBackMotor.setPower(rightPower);
+            leftFrontMotor.setPower(leftPower);
+            leftBackMotor.setPower(leftPower);
+            rightFrontMotor.setPower(rightPower);
+            rightBackMotor.setPower(rightPower);
+            armMotor.setPower(armPower);
 
             // Switch modes
             if (gamepad1.dpad_up)
