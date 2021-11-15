@@ -65,6 +65,9 @@ public class BasicDrive extends LinearOpMode {
     private boolean tankDrive = true;
     private double basePower = 1;
     private double lastPowerChangeTime;
+    private double lastArmMoveTime;
+
+    private final double ARM_POWER = 0.1;
 
     @Override
     public void runOpMode() {
@@ -84,9 +87,9 @@ public class BasicDrive extends LinearOpMode {
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftBackMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //Reset encoders
         leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -100,25 +103,24 @@ public class BasicDrive extends LinearOpMode {
         leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Set arm motor to break
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setTargetPosition(0);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
         lastPowerChangeTime = runtime.time();
+        lastArmMoveTime = runtime.time();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
+            // Setup a variable for each drive wheel
             double leftPower;
             double rightPower;
-            double armPower;
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -140,18 +142,29 @@ public class BasicDrive extends LinearOpMode {
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
             }
 
-            armPower = (gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0);
-
             leftPower *= basePower;
             rightPower *= basePower;
-            armPower *= basePower;
+
+            if (runtime.time() > lastArmMoveTime + 0.1)
+            {
+                if (gamepad1.left_bumper)
+                {
+                    armMotor.setTargetPosition(armMotor.getCurrentPosition() - 1);
+                    lastPowerChangeTime = runtime.time();
+                }
+                if (gamepad1.right_bumper)
+                {
+                    armMotor.setTargetPosition(armMotor.getCurrentPosition() + 1);
+                    lastPowerChangeTime = runtime.time();
+                }
+            }
 
             // Send calculated power to wheels
             leftFrontMotor.setPower(leftPower);
             leftBackMotor.setPower(leftPower);
             rightFrontMotor.setPower(rightPower);
             rightBackMotor.setPower(rightPower);
-            armMotor.setPower(armPower);
+            armMotor.setPower(ARM_POWER);
 
             // Switch modes
             if (gamepad1.dpad_up)
@@ -184,6 +197,7 @@ public class BasicDrive extends LinearOpMode {
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.addData("Power", basePower);
             telemetry.addData("Mode", tankDrive ? "Tank Drive" : "POV Drive");
+            telemetry.addData("Arm Position", armMotor.getCurrentPosition());
             telemetry.update();
 
             // Sleep to make the loop have more consistent timing
