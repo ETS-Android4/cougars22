@@ -67,7 +67,7 @@ public class BasicDrive extends LinearOpMode {
     private double lastPowerChangeTime;
     private double lastArmMoveTime;
 
-    private final double ARM_POWER = 0.1;
+    private final double ARM_POWER = 0.4;
 
     @Override
     public void runOpMode() {
