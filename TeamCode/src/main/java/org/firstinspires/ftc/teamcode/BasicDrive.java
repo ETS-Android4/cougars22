@@ -66,8 +66,9 @@ public class BasicDrive extends LinearOpMode {
     private double basePower = 1;
     private double lastPowerChangeTime;
     private double lastArmMoveTime;
+    private int armTargetPosition = 0;
 
-    private final double ARM_POWER = 0.4;
+    private final double ARM_POWER = 1;
 
     @Override
     public void runOpMode() {
@@ -104,6 +105,7 @@ public class BasicDrive extends LinearOpMode {
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        armTargetPosition = 0;
         armMotor.setTargetPosition(0);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -145,19 +147,21 @@ public class BasicDrive extends LinearOpMode {
             leftPower *= basePower;
             rightPower *= basePower;
 
-            if (runtime.time() > lastArmMoveTime + 0.1)
+            if (runtime.time() > lastArmMoveTime + 0.05)
             {
-                if (gamepad1.left_bumper)
-                {
-                    armMotor.setTargetPosition(armMotor.getCurrentPosition() - 1);
-                    lastPowerChangeTime = runtime.time();
-                }
                 if (gamepad1.right_bumper)
                 {
-                    armMotor.setTargetPosition(armMotor.getCurrentPosition() + 1);
+                    armTargetPosition -= 1;
+                    lastPowerChangeTime = runtime.time();
+                }
+                if (gamepad1.left_bumper)
+                {
+                    armTargetPosition += 1;
                     lastPowerChangeTime = runtime.time();
                 }
             }
+            armTargetPosition = Math.min(armTargetPosition, 0);
+            armMotor.setTargetPosition(armTargetPosition);
 
             // Send calculated power to wheels
             leftFrontMotor.setPower(leftPower);
@@ -197,7 +201,7 @@ public class BasicDrive extends LinearOpMode {
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.addData("Power", basePower);
             telemetry.addData("Mode", tankDrive ? "Tank Drive" : "POV Drive");
-            telemetry.addData("Arm Position", armMotor.getCurrentPosition());
+            telemetry.addData("Arm Position", armTargetPosition);
             telemetry.update();
 
             // Sleep to make the loop have more consistent timing

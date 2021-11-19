@@ -62,6 +62,7 @@ public class MotorTest extends LinearOpMode
             currMotor.setPower(gamepad1.left_stick_y * POWER);
 
             telemetry.addData("Motor", motorNames.get(motorIndex));
+            telemetry.addData("Motor Position", currMotor.getCurrentPosition());
             telemetry.update();
         }
     }
