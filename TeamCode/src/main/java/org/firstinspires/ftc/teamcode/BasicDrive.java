@@ -31,9 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -57,11 +55,7 @@ public class BasicDrive extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontMotor = null;
-    private DcMotor leftBackMotor = null;
-    private DcMotor rightFrontMotor = null;
-    private DcMotor rightBackMotor = null;
-    private DcMotor armMotor = null;
+    private OurBot robot = new OurBot();
     private boolean tankDrive = true;
     private double basePower = 1;
     private double lastPowerChangeTime;
@@ -76,38 +70,11 @@ public class BasicDrive extends LinearOpMode {
         telemetry.addData("Seb", "Is Cool");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftFrontMotor  = hardwareMap.get(DcMotor.class, "leftFront");
-        leftBackMotor = hardwareMap.get(DcMotor.class, "leftBack");
-        rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBackMotor = hardwareMap.get(DcMotor.class, "rightBack");
-        armMotor = hardwareMap.get(DcMotor.class, "arm");
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftBackMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        //Reset encoders
-        leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        //Set all motors to use encoders
-        leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.init(hardwareMap);
 
         armTargetPosition = 0;
-        armMotor.setTargetPosition(0);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setTargetPosition(0);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -161,14 +128,14 @@ public class BasicDrive extends LinearOpMode {
                 }
             }
             armTargetPosition = Math.min(armTargetPosition, 0);
-            armMotor.setTargetPosition(armTargetPosition);
+            robot.arm.setTargetPosition(armTargetPosition);
 
             // Send calculated power to wheels
-            leftFrontMotor.setPower(leftPower);
-            leftBackMotor.setPower(leftPower);
-            rightFrontMotor.setPower(rightPower);
-            rightBackMotor.setPower(rightPower);
-            armMotor.setPower(ARM_POWER);
+            robot.leftFront.setPower(leftPower);
+            robot.leftBack.setPower(leftPower);
+            robot.rightFront.setPower(rightPower);
+            robot.rightBack.setPower(rightPower);
+            robot.arm.setPower(ARM_POWER);
 
             // Switch modes
             if (gamepad1.dpad_up)
