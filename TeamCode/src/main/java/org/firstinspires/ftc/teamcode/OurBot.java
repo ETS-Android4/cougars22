@@ -60,6 +60,8 @@ public class OurBot
     public DcMotor  rightFront  = null;
     public DcMotor  rightBack   = null;
     public DcMotor  arm         = null;
+    public DcMotor  grabber     = null;
+    public DcMotor  armRotator  = null;
 
     public static final double ARM_POWER = 1;
 
@@ -83,6 +85,8 @@ public class OurBot
         rightFront  = hwMap.get(DcMotor.class, "rightFront");
         rightBack   = hwMap.get(DcMotor.class, "rightBack");
         arm         = hwMap.get(DcMotor.class, "arm");
+        grabber     = hwMap.get(DcMotor.class, "grabber");
+        armRotator  = hwMap.get(DcMotor.class, "armRotator");
 
         //Initialize Motor Direction
         leftFront.setDirection(Direction.FORWARD);
@@ -90,6 +94,8 @@ public class OurBot
         rightFront.setDirection(Direction.REVERSE);
         rightBack.setDirection(Direction.REVERSE);
         arm.setDirection(Direction.FORWARD);
+        grabber.setDirection(Direction.FORWARD);
+        armRotator.setDirection(Direction.FORWARD);
 
         //Set all motors to zero power
         leftFront.setPower(0);
@@ -97,6 +103,8 @@ public class OurBot
         rightFront.setPower(0);
         rightBack.setPower(0);
         arm.setPower(0);
+        grabber.setPower(0);
+        armRotator.setPower(0);
 
         //Reset all encoders
         leftFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
@@ -104,6 +112,8 @@ public class OurBot
         rightFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        grabber.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        armRotator.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //Set all motors to run with encoder
         leftFront.setMode(RunMode.RUN_USING_ENCODER);
@@ -111,6 +121,8 @@ public class OurBot
         rightFront.setMode(RunMode.RUN_USING_ENCODER);
         rightBack.setMode(RunMode.RUN_USING_ENCODER);
         arm.setMode(RunMode.RUN_USING_ENCODER);
+        grabber.setMode(RunMode.RUN_USING_ENCODER);
+        armRotator.setMode(RunMode.RUN_USING_ENCODER);
     }
  }
 

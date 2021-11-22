@@ -71,13 +71,13 @@ public class DriveByEncoder extends LinearOpMode
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 28;    // REV Ultraplanetary
-    static final double DRIVE_GEAR_REDUCTION = 12.0;     // This is < 1.0 if geared UP
+    static final double DRIVE_GEAR_REDUCTION = 2.89 * 3.61;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 3.54330709;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * Math.PI);
     static final double TURNING_RADIUS_INCHES = Math.sqrt( Math.pow((11.0 + 9.0/16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0/16.0) / 2.0, 2.0) );
-    static final double DRIVE_SPEED = 0.1;
-    static final double TURN_SPEED = 0.2;
+    static final double DRIVE_SPEED = 0.3;
+    static final double TURN_SPEED = 0.1;
 
     @Override
     public void runOpMode()
@@ -91,6 +91,11 @@ public class DriveByEncoder extends LinearOpMode
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
+
+        robot.leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at %7d, %7d, %7d, %7d",
@@ -110,8 +115,8 @@ public class DriveByEncoder extends LinearOpMode
         encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
         encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         */
-        encoderDrive(DRIVE_SPEED, 10, 10, 5.0);
-        //encoderTurn(TURN_SPEED, 90, 4.0);
+        //encoderDrive(DRIVE_SPEED, 10, 10, 5.0);
+        encoderTurn(TURN_SPEED, 90, 4.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -129,6 +134,8 @@ public class DriveByEncoder extends LinearOpMode
                              double leftInches, double rightInches,
                              double timeoutS)
     {
+        int startPos;
+
         int leftFrontTarget;
         int leftBackTarget;
         int rightFrontTarget;
@@ -137,7 +144,7 @@ public class DriveByEncoder extends LinearOpMode
         // Ensure that the opmode is still active
         if (opModeIsActive())
         {
-
+            startPos = robot.leftFront.getCurrentPosition();
             // Determine new target position, and pass to motor controller
             leftFrontTarget = robot.leftFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
             leftBackTarget = robot.leftBack.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
@@ -156,10 +163,11 @@ public class DriveByEncoder extends LinearOpMode
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.leftFront.setPower(Math.abs(speed));
-            robot.leftBack.setPower(Math.abs(speed));
-            robot.rightFront.setPower(Math.abs(speed));
-            robot.rightBack.setPower(Math.abs(speed));
+            speed = Math.abs(speed);
+            robot.leftFront.setPower(speed);
+            robot.leftBack.setPower(speed);
+            robot.rightFront.setPower(speed);
+            robot.rightBack.setPower(speed);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -169,12 +177,21 @@ public class DriveByEncoder extends LinearOpMode
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) && (robot.rightFront.isBusy() || robot.rightBack.isBusy())))
+                    ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) || (robot.rightFront.isBusy() || robot.rightBack.isBusy())))
             {
-
+                //double scaledSpeed = speed * Math.max(1 - ((double)(robot.leftFront.getCurrentPosition() - startPos) / (leftInches * COUNTS_PER_INCH)), 0.25);
+                double scaledSpeed = speed;
+                robot.leftFront.setPower(scaledSpeed);
+                robot.leftBack.setPower(scaledSpeed);
+                robot.rightFront.setPower(scaledSpeed);
+                robot.rightBack.setPower(scaledSpeed);
                 // Display it for the driver.
                 telemetry.addData("Path1", "Running to %7d, %7d, %7d, %7d", leftFrontTarget, leftBackTarget, rightFrontTarget, rightBackTarget);
-                telemetry.addData("Path2", "Running at %7d, %7d, %7d, %7d", leftFrontTarget, leftBackTarget, rightFrontTarget, rightBackTarget);
+                telemetry.addData("Path2", "Running at %7d, %7d, %7d, %7d",
+                        robot.leftFront.getCurrentPosition(),
+                        robot.leftBack.getCurrentPosition(),
+                        robot.rightFront.getCurrentPosition(),
+                        robot.rightBack.getCurrentPosition());
                 telemetry.update();
             }
 

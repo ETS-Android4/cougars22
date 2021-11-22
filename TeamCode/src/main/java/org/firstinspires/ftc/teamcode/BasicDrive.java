@@ -63,6 +63,8 @@ public class BasicDrive extends LinearOpMode {
     private int armTargetPosition = 0;
 
     private final double ARM_POWER = 1;
+    private final double GRABBER_POWER = 0.2;
+    private final double ARM_ROTATOR_POWER = 0.2;
 
     @Override
     public void runOpMode() {
@@ -136,6 +138,8 @@ public class BasicDrive extends LinearOpMode {
             robot.rightFront.setPower(rightPower);
             robot.rightBack.setPower(rightPower);
             robot.arm.setPower(ARM_POWER);
+            robot.grabber.setPower(GRABBER_POWER * (gamepad1.square ? -1 : gamepad1.circle ? 1 : 0));
+            robot.armRotator.setPower(ARM_ROTATOR_POWER * (gamepad1.cross ? -1 : gamepad1.triangle ? 1 : 0));
 
             // Switch modes
             if (gamepad1.dpad_up)
