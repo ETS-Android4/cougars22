@@ -76,8 +76,8 @@ public class DriveByEncoder extends LinearOpMode
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * Math.PI);
     static final double TURNING_RADIUS_INCHES = Math.sqrt( Math.pow((11.0 + 9.0/16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0/16.0) / 2.0, 2.0) );
-    static final double DRIVE_SPEED = 0.6;
-    static final double TURN_SPEED = 0.5;
+    static final double DRIVE_SPEED = 0.1;
+    static final double TURN_SPEED = 0.2;
 
     @Override
     public void runOpMode()
@@ -111,7 +111,7 @@ public class DriveByEncoder extends LinearOpMode
         encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         */
         encoderDrive(DRIVE_SPEED, 10, 10, 5.0);
-        encoderTurn(TURN_SPEED, 90, 4.0);
+        //encoderTurn(TURN_SPEED, 90, 4.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -197,6 +197,6 @@ public class DriveByEncoder extends LinearOpMode
     public void encoderTurn(double speed, double degrees, double timeoutS)
     {
         double inches = Math.toRadians(degrees) * TURNING_RADIUS_INCHES;
-        encoderDrive(speed, degrees, -degrees, timeoutS);
+        encoderDrive(speed, inches, -inches, timeoutS);
     }
 }
