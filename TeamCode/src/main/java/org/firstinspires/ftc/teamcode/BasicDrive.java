@@ -61,10 +61,12 @@ public class BasicDrive extends LinearOpMode {
     private double lastPowerChangeTime;
     private double lastArmMoveTime;
     private int armTargetPosition = 0;
+    private double lastArmRotatorMoveTIme;
+    private int armRotatorTargetPosition;
 
     private final double ARM_POWER = 1;
     private final double GRABBER_POWER = 0.2;
-    private final double ARM_ROTATOR_POWER = 0.2;
+    private final double ARM_ROTATOR_POWER = 0.3;
 
     @Override
     public void runOpMode() {
@@ -77,6 +79,10 @@ public class BasicDrive extends LinearOpMode {
         armTargetPosition = 0;
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        armRotatorTargetPosition = 0;
+        robot.armRotator.setTargetPosition(0);
+        robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -118,12 +124,12 @@ public class BasicDrive extends LinearOpMode {
 
             if (runtime.time() > lastArmMoveTime + 0.05)
             {
-                if (gamepad1.right_bumper)
+                if (gamepad2.right_bumper)
                 {
                     armTargetPosition -= 1;
                     lastPowerChangeTime = runtime.time();
                 }
-                if (gamepad1.left_bumper)
+                if (gamepad2.left_bumper)
                 {
                     armTargetPosition += 1;
                     lastPowerChangeTime = runtime.time();
@@ -132,14 +138,30 @@ public class BasicDrive extends LinearOpMode {
             armTargetPosition = Math.min(armTargetPosition, 0);
             robot.arm.setTargetPosition(armTargetPosition);
 
+            if (runtime.time() > lastArmRotatorMoveTIme + 0.05)
+            {
+                if (gamepad2.right_trigger > 0.5)
+                {
+                    armRotatorTargetPosition -= 1;
+                    lastArmRotatorMoveTIme = runtime.time();
+                }
+                if (gamepad1.left_trigger > 0.5)
+                {
+                    armRotatorTargetPosition += 1;
+                    lastArmRotatorMoveTIme = runtime.time();
+                }
+            }
+            armRotatorTargetPosition = Math.min(armRotatorTargetPosition, 0);
+            robot.armRotator.setTargetPosition(armRotatorTargetPosition);
+
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
             robot.leftBack.setPower(leftPower);
             robot.rightFront.setPower(rightPower);
             robot.rightBack.setPower(rightPower);
             robot.arm.setPower(ARM_POWER);
-            robot.grabber.setPower(GRABBER_POWER * (gamepad1.square ? -1 : gamepad1.circle ? 1 : 0));
-            robot.armRotator.setPower(ARM_ROTATOR_POWER * (gamepad1.cross ? -1 : gamepad1.triangle ? 1 : 0));
+            robot.grabber.setPower(GRABBER_POWER * (gamepad1.right_bumper ? -1 : gamepad1.left_bumper ? 1 : 0));
+            robot.armRotator.setPower(ARM_ROTATOR_POWER);
 
             // Switch modes
             if (gamepad1.dpad_up)
