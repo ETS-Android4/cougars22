@@ -62,8 +62,7 @@ public class OurBot
     public DcMotor  arm         = null;
     public DcMotor  grabber     = null;
     public DcMotor  armRotator  = null;
-
-    public static final double ARM_POWER = 1;
+    public DcMotor  duckSpinner = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           = null;
@@ -87,6 +86,7 @@ public class OurBot
         arm         = hwMap.get(DcMotor.class, "arm");
         grabber     = hwMap.get(DcMotor.class, "grabber");
         armRotator  = hwMap.get(DcMotor.class, "armRotator");
+        duckSpinner = hwMap.get(DcMotor.class, "duckSpinner");
 
         //Initialize Motor Direction
         leftFront.setDirection(Direction.FORWARD);
@@ -96,6 +96,7 @@ public class OurBot
         arm.setDirection(Direction.FORWARD);
         grabber.setDirection(Direction.FORWARD);
         armRotator.setDirection(Direction.FORWARD);
+        duckSpinner.setDirection(Direction.FORWARD);
 
         //Set all motors to zero power
         leftFront.setPower(0);
@@ -105,6 +106,7 @@ public class OurBot
         arm.setPower(0);
         grabber.setPower(0);
         armRotator.setPower(0);
+        duckSpinner.setPower(0);
 
         //Reset all encoders
         leftFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
@@ -114,6 +116,7 @@ public class OurBot
         arm.setMode(RunMode.STOP_AND_RESET_ENCODER);
         grabber.setMode(RunMode.STOP_AND_RESET_ENCODER);
         armRotator.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        duckSpinner.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //Set all motors to run with encoder
         leftFront.setMode(RunMode.RUN_USING_ENCODER);
@@ -123,6 +126,7 @@ public class OurBot
         arm.setMode(RunMode.RUN_USING_ENCODER);
         grabber.setMode(RunMode.RUN_USING_ENCODER);
         armRotator.setMode(RunMode.RUN_USING_ENCODER);
+        duckSpinner.setMode(RunMode.RUN_USING_ENCODER);
     }
  }
 
