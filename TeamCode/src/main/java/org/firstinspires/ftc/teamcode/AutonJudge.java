@@ -61,9 +61,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Drive by Encoder")
+@Autonomous(name = "Judge Side")
 //@Disabled
-public class DriveByEncoder extends LinearOpMode
+public class AutonJudge extends LinearOpMode
 {
 
     /* Declare OpMode members. */
@@ -116,7 +116,26 @@ public class DriveByEncoder extends LinearOpMode
         encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         */
         //encoderDrive(DRIVE_SPEED, 10, 10, 5.0);
-        encoderTurn(TURN_SPEED, 90, 4.0);
+        //encoderTurn(TURN_SPEED, 90, 4.0);
+
+        /*
+        robot.arm.setTargetPosition(0);
+        robot.armRotator.setTargetPosition(0);
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(1);
+        robot.armRotator.setPower(0.2);
+
+        while(opModeIsActive() && robot.arm.isBusy() && robot.armRotator.isBusy())
+        {
+            idle();
+        }
+        */
+
+        robot.grabber.setPower(-0.1);
+        encoderDrive(0.5, -96, -96, 10.0);
+        robot.grabber.setPower(0.1);
+        sleep(750);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

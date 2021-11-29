@@ -56,17 +56,21 @@ public class BasicDrive extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private OurBot robot = new OurBot();
-    private boolean tankDrive = true;
-    private double basePower = 1;
+    private boolean tankDrive = false;
+    private double basePower = 0.8;
     private double lastPowerChangeTime;
-    private double lastArmMoveTime;
     private double armTargetPosition = 0;
-    private double lastArmRotatorMoveTIme;
+    private boolean armHolding = true;
     private double armRotatorTargetPosition;
+    private boolean armRotatorHolding = true;
 
-    private final double ARM_POWER = 1;
-    private final double GRABBER_POWER = 0.2;
-    private final double ARM_ROTATOR_POWER = 0.2;
+    private final double FAST_DRIVE_POWER = 0.8;
+    private final double SLOW_DRIVE_POWER = 0.5;
+    private final double ARM_POWER = 0.5;
+    private final double ARM_HOLD_POWER = 1;
+    private final double GRABBER_POWER = 0.3;
+    private final double ARM_ROTATOR_POWER = 0.3;
+    private final double ARM_ROTATOR_HOLD_POWER = 0.7;
     private final double DUCK_SPINNER_POWER = 0.3;
 
     @Override
@@ -90,7 +94,6 @@ public class BasicDrive extends LinearOpMode {
         runtime.reset();
 
         lastPowerChangeTime = runtime.time();
-        lastArmMoveTime = runtime.time();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
@@ -99,6 +102,8 @@ public class BasicDrive extends LinearOpMode {
             // Setup a variable for each drive wheel
             double leftPower;
             double rightPower;
+            double armPower;
+            double armRotatorPower;
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -123,53 +128,49 @@ public class BasicDrive extends LinearOpMode {
             leftPower *= basePower;
             rightPower *= basePower;
 
-            /*
-            if (runtime.time() > lastArmMoveTime + 0.05)
+            if (gamepad2.left_stick_y != 0)
             {
-                if (gamepad2.right_bumper)
+                armPower = ARM_POWER * gamepad2.left_stick_y * -1;
+                robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armHolding = false;
+            }
+            else
+            {
+                armPower = ARM_HOLD_POWER;
+                if (!armHolding)
                 {
-                    armTargetPosition -= 1;
-                    lastPowerChangeTime = runtime.time();
-                }
-                if (gamepad2.left_bumper)
-                {
-                    armTargetPosition += 1;
-                    lastPowerChangeTime = runtime.time();
+                    robot.arm.setTargetPosition(robot.arm.getCurrentPosition());
+                    robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armHolding = true;
                 }
             }
-            */
-            armTargetPosition += gamepad2.left_stick_y * 2;
-            armTargetPosition = Math.min(armTargetPosition, 0);
-            robot.arm.setTargetPosition((int)armTargetPosition);
 
-            /*
-            if (runtime.time() > lastArmRotatorMoveTIme + 0.05)
+            if (gamepad2.right_stick_y != 0)
             {
-                if (gamepad2.right_trigger > 0.5)
+                armRotatorPower = ARM_ROTATOR_POWER * gamepad2.right_stick_y * -1;
+                robot.armRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armRotatorHolding = false;
+            }
+            else
+            {
+                armRotatorPower = ARM_ROTATOR_HOLD_POWER;
+                if (!armRotatorHolding)
                 {
-                    armRotatorTargetPosition -= 1;
-                    lastArmRotatorMoveTIme = runtime.time();
-                }
-                if (gamepad1.left_trigger > 0.5)
-                {
-                    armRotatorTargetPosition += 1;
-                    lastArmRotatorMoveTIme = runtime.time();
+                    robot.armRotator.setTargetPosition(robot.armRotator.getCurrentPosition());
+                    robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armRotatorHolding = true;
                 }
             }
-            */
-            armRotatorTargetPosition += gamepad2.right_stick_y;
-            armRotatorTargetPosition = Math.min(armRotatorTargetPosition, 0);
-            robot.armRotator.setTargetPosition((int)armRotatorTargetPosition);
 
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
             robot.leftBack.setPower(leftPower);
             robot.rightFront.setPower(rightPower);
             robot.rightBack.setPower(rightPower);
-            robot.arm.setPower(ARM_POWER);
-            robot.grabber.setPower(GRABBER_POWER * (gamepad1.left_trigger - gamepad1.right_trigger));
-            robot.armRotator.setPower(ARM_ROTATOR_POWER);
-            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
+            robot.arm.setPower(armPower);
+            robot.armRotator.setPower(armRotatorPower);
+            robot.grabber.setPower(GRABBER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
+            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad1.left_trigger - gamepad1.right_trigger));
 
             // Switch modes
             if (gamepad1.dpad_up)
@@ -183,6 +184,15 @@ public class BasicDrive extends LinearOpMode {
 
 
             // Adjust Power
+            if (gamepad1.dpad_left)
+            {
+                basePower = SLOW_DRIVE_POWER;
+            }
+            else if (gamepad1.dpad_right)
+            {
+                basePower = FAST_DRIVE_POWER;
+            }
+            /*
             if (runtime.time() > lastPowerChangeTime + 0.5)
             {
                 if (gamepad1.dpad_left)
@@ -196,6 +206,7 @@ public class BasicDrive extends LinearOpMode {
                     lastPowerChangeTime = runtime.time();
                 }
             }
+            */
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
