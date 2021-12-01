@@ -119,7 +119,7 @@ public class AutonAudience extends LinearOpMode
         //encoderTurn(TURN_SPEED, 90, 4.0);
 
 
-        robot.arm.setTargetPosition(-100);
+       /* robot.arm.setTargetPosition(-100); //delete
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.arm.setPower(1);
 
@@ -133,7 +133,19 @@ public class AutonAudience extends LinearOpMode
         encoderDrive(0.5, -24, -24, 10.0);
         robot.grabber.setPower(0.1);
         sleep(750);
+//delete
+*/
+        robot.arm.setTargetPosition(-100); //delete
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(1);
 
+        while(opModeIsActive() && robot.arm.isBusy())
+        {
+            idle();
+        }
+
+        robot.grabber.setPower(-0.1);
+        robot.arm.setMode
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
