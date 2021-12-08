@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @TeleOp(name="Motor Test")
@@ -19,10 +21,23 @@ public class MotorTest extends LinearOpMode
     private boolean leftDownLastFrame = false;
     private boolean rightDownLastFrame = false;
     private ElapsedTime runtime = new ElapsedTime();
+    private GyroSensor gyro;
 
     @Override
     public void runOpMode()
     {
+        gyro = hardwareMap.get(GyroSensor.class, "gyro");
+
+        telemetry.addData(">", "Calibrating Gyro");
+        telemetry.update();
+        gyro.calibrate();
+        while (!isStopRequested() && gyro.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+        telemetry.addData(">", "Gyro Ready");
+        telemetry.update();
+
         List<DcMotor> motors = hardwareMap.getAll(DcMotor.class);
         List<String> motorNames = new ArrayList<>();
         for (DcMotor motor : motors)
@@ -32,6 +47,8 @@ public class MotorTest extends LinearOpMode
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+        telemetry.addData(">", "Robot Ready");
+        telemetry.update();
 
         waitForStart();
         runtime.reset();
@@ -85,6 +102,7 @@ public class MotorTest extends LinearOpMode
             telemetry.addData("Motor", motorNames.get(motorIndex));
             telemetry.addData("Motor Position", currMotor.getCurrentPosition());
             telemetry.addData("Power", power);
+            telemetry.addData("Headings", "x: %d, y: %d, z: %d", gyro.rawX(), gyro.rawY(), gyro.rawZ());
             telemetry.update();
         }
     }
