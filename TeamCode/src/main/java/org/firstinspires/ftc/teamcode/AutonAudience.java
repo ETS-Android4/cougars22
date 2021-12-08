@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import androidx.appcompat.widget.MenuPopupWindow;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -61,7 +63,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Audience Side")
+@Autonomous(name = "JOE THINGY")
 //@Disabled
 public class AutonAudience extends LinearOpMode
 {
@@ -135,10 +137,13 @@ public class AutonAudience extends LinearOpMode
         sleep(750);
 //delete
 */
-        encoderDrive(0.4, -5, -5, 10);
-        encoderDrive(0.2, -5, 5, 10);
-        encoderDrive(0.4, 20, 20, 10);
+        encoderDrive(0.2, 6, 6, 10);
+        encoderDrive(0.2,1,1,10);
+        encoderDrive(0.2, 11, -11, 10);
+        encoderDrive(0.2, 15, 15, 8);
         sleep(1000);
+
+
 
 
         //robot.duckSpinner.setTargetPosition(-500);
