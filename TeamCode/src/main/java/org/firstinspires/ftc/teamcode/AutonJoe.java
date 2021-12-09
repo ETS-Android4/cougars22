@@ -65,7 +65,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "JOE THINGY")
 //@Disabled
-public class AutonAudience extends LinearOpMode
+public class AutonJoe extends LinearOpMode
 {
 
     /* Declare OpMode members. */
