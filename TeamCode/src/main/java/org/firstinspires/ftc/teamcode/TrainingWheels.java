@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -51,29 +53,71 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
+class LameDriveBot
+{
+    /* Public OpMode members. */
+    public DcMotor  leftFront   = null;
+    public DcMotor  leftBack    = null;
+    public DcMotor  rightFront  = null;
+    public DcMotor  rightBack   = null;
+
+    /* local OpMode members. */
+    HardwareMap hwMap           = null;
+    private ElapsedTime period  = new ElapsedTime();
+
+    /* Constructor */
+    public LameDriveBot(){
+
+    }
+
+    /* Initialize standard Hardware interfaces */
+    public void init(HardwareMap ahwMap) {
+        // Save reference to Hardware map
+        hwMap = ahwMap;
+
+        // Define Motors
+        leftFront   = hwMap.get(DcMotor.class, "leftFront");
+        leftBack    = hwMap.get(DcMotor.class, "leftBack");
+        rightFront  = hwMap.get(DcMotor.class, "rightFront");
+        rightBack   = hwMap.get(DcMotor.class, "rightBack");
+
+        //Initialize Motor Direction
+        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //Set all motors to zero power
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
+
+        //Reset all encoders
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Set all motors to run with encoder
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+}
+
+
 @TeleOp(name="Training Wheels")
 //@Disabled
 public class TrainingWheels extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private OurBot robot = new OurBot();
-    private boolean tankDrive = false;
+    private LameDriveBot robot = new LameDriveBot();
     private double basePower = 0.1;
-    private double lastPowerChangeTime;
-    private double armTargetPosition = 0;
-    private boolean armHolding = true;
-    private double armRotatorTargetPosition;
-    private boolean armRotatorHolding = true;
 
-    private final double FAST_DRIVE_POWER = 0.8;
-    private final double SLOW_DRIVE_POWER = 0.5;
-    private final double ARM_POWER = 0.5;
-    private final double ARM_HOLD_POWER = 1;
-    private final double GRABBER_POWER = 0.3;
-    private final double ARM_ROTATOR_POWER = 0.3;
-    private final double ARM_ROTATOR_HOLD_POWER = 0.7;
-    private final double DUCK_SPINNER_POWER = 0.3;
+    private double DRIVE_POWER = 0.1;
 
     @Override
     public void runOpMode() {
@@ -83,140 +127,35 @@ public class TrainingWheels extends LinearOpMode {
 
         robot.init(hardwareMap);
 
-        armTargetPosition = 0;
-        robot.arm.setTargetPosition(0);
-        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        armRotatorTargetPosition = 0;
-        robot.armRotator.setTargetPosition(0);
-        robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
-        lastPowerChangeTime = runtime.time();
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-
             // Setup a variable for each drive wheel
             double leftPower;
             double rightPower;
-            double armPower;
-            double armRotatorPower;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
+            double drive = -gamepad1.left_stick_y;
+            double turn = gamepad1.right_stick_x;
+            leftPower = Range.clip(drive + turn, -1.0, 1.0);
+            rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            if (tankDrive)
-            {
-                leftPower =  gamepad1.left_stick_y;
-                rightPower = gamepad1.right_stick_y;
-            }
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            else
-            {
-                double drive = -gamepad1.left_stick_y;
-                double turn = gamepad1.right_stick_x;
-                leftPower = Range.clip(drive + turn, -1.0, 1.0);
-                rightPower = Range.clip(drive - turn, -1.0, 1.0);
-            }
-
+            basePower = DRIVE_POWER;
             leftPower *= basePower;
             rightPower *= basePower;
-
-            if (gamepad2.left_stick_y != 0)
-            {
-                armPower = ARM_POWER * gamepad2.left_stick_y * -1;
-                robot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                armHolding = false;
-            }
-            else
-            {
-                armPower = ARM_HOLD_POWER;
-                if (!armHolding)
-                {
-                    robot.arm.setTargetPosition(robot.arm.getCurrentPosition());
-                    robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    armHolding = true;
-                }
-            }
-
-            if (gamepad2.right_stick_y != 0)
-            {
-                armRotatorPower = ARM_ROTATOR_POWER * gamepad2.right_stick_y * -1;
-                robot.armRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                armRotatorHolding = false;
-            }
-            else
-            {
-                armRotatorPower = ARM_ROTATOR_HOLD_POWER;
-                if (!armRotatorHolding)
-                {
-                    robot.armRotator.setTargetPosition(robot.armRotator.getCurrentPosition());
-                    robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    armRotatorHolding = true;
-                }
-            }
 
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
             robot.leftBack.setPower(leftPower);
             robot.rightFront.setPower(rightPower);
             robot.rightBack.setPower(rightPower);
-            robot.arm.setPower(armPower);
-            robot.armRotator.setPower(armRotatorPower);
-            robot.grabber.setPower(GRABBER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
-            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad1.left_trigger - gamepad1.right_trigger));
-
-            // Switch modes
-            if (gamepad1.dpad_up)
-            {
-                tankDrive = false;
-            }
-            else if (gamepad1.dpad_down)
-            {
-                tankDrive = true;
-            }
-
-
-            // Adjust Power
-            if (gamepad1.dpad_left)
-            {
-                basePower = SLOW_DRIVE_POWER;
-            }
-            else if (gamepad1.dpad_right)
-            {
-                basePower = FAST_DRIVE_POWER;
-            }
-            /*
-            if (runtime.time() > lastPowerChangeTime + 0.5)
-            {
-                if (gamepad1.dpad_left)
-                {
-                    basePower = Math.max(0, basePower - 0.1);
-                    lastPowerChangeTime = runtime.time();
-                }
-                else if (gamepad1.dpad_right)
-                {
-                    basePower = Math.min(1, basePower + 0.1);
-                    lastPowerChangeTime = runtime.time();
-                }
-            }
-            */
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("Power", basePower);
-            telemetry.addData("Mode", tankDrive ? "Tank Drive" : "POV Drive");
-            telemetry.addData("Arm Position", armTargetPosition);
-            telemetry.addData("Arm Rotator Position", armRotatorTargetPosition);
             telemetry.update();
 
             // Sleep to make the loop have more consistent timing
