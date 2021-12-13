@@ -29,10 +29,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -63,11 +69,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Judge Side")
 //@Disabled
-public class AutonJudge extends LinearOpMode
-{
+public class AutonJudge extends LinearOpMode {
 
     /* Declare OpMode members. */
     OurBot robot = new OurBot();
+    BNO055IMU imu = null;
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 28;    // REV Ultraplanetary
@@ -75,13 +81,12 @@ public class AutonJudge extends LinearOpMode
     static final double WHEEL_DIAMETER_INCHES = 3.54330709;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double TURNING_RADIUS_INCHES = Math.sqrt( Math.pow((11.0 + 9.0/16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0/16.0) / 2.0, 2.0) );
+    static final double TURNING_RADIUS_INCHES = Math.sqrt(Math.pow((11.0 + 9.0 / 16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0 / 16.0) / 2.0, 2.0));
     static final double DRIVE_SPEED = 0.3;
     static final double TURN_SPEED = 0.1;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Initializing Hardware");    //
         telemetry.update();
@@ -91,6 +96,17 @@ public class AutonJudge extends LinearOpMode
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        //parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
 
         robot.leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -108,34 +124,6 @@ public class AutonJudge extends LinearOpMode
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        /*
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-        */
-        //encoderDrive(DRIVE_SPEED, 10, 10, 5.0);
-        //encoderTurn(TURN_SPEED, 90, 4.0);
-
-        /*
-        robot.arm.setTargetPosition(0);
-        robot.armRotator.setTargetPosition(0);
-        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(1);
-        robot.armRotator.setPower(0.2);
-
-        while(opModeIsActive() && robot.arm.isBusy() && robot.armRotator.isBusy())
-        {
-            idle();
-        }
-        */
-
-        robot.grabber.setPower(-0.1);
-        encoderDrive(0.5, -96, -96, 10.0);
-        robot.grabber.setPower(0.1);
-        sleep(750);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -151,8 +139,7 @@ public class AutonJudge extends LinearOpMode
      */
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
-                             double timeoutS)
-    {
+                             double timeoutS) {
         int startPos;
 
         int leftFrontTarget;
@@ -161,8 +148,7 @@ public class AutonJudge extends LinearOpMode
         int rightBackTarget;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive())
-        {
+        if (opModeIsActive()) {
             startPos = robot.leftFront.getCurrentPosition();
             // Determine new target position, and pass to motor controller
             leftFrontTarget = robot.leftFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
@@ -196,8 +182,7 @@ public class AutonJudge extends LinearOpMode
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) || (robot.rightFront.isBusy() || robot.rightBack.isBusy())))
-            {
+                    ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) || (robot.rightFront.isBusy() || robot.rightBack.isBusy()))) {
                 //double scaledSpeed = speed * Math.max(1 - ((double)(robot.leftFront.getCurrentPosition() - startPos) / (leftInches * COUNTS_PER_INCH)), 0.25);
                 double scaledSpeed = speed;
                 robot.leftFront.setPower(scaledSpeed);
@@ -230,9 +215,13 @@ public class AutonJudge extends LinearOpMode
         }
     }
 
-    public void encoderTurn(double speed, double degrees, double timeoutS)
-    {
+    public void encoderTurn(double speed, double degrees, double timeoutS) {
         double inches = Math.toRadians(degrees) * TURNING_RADIUS_INCHES;
         encoderDrive(speed, inches, -inches, timeoutS);
+    }
+
+    public void gyroTurn(double speed, double angle)
+    {
+        imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 }
