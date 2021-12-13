@@ -115,9 +115,9 @@ public class TrainingWheels extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private LameDriveBot robot = new LameDriveBot();
-    private double basePower = 0.1;
+    private double basePower;
 
-    private double DRIVE_POWER = 0.1;
+    private double DRIVE_POWER = 0.15;
 
     @Override
     public void runOpMode() {
