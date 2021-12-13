@@ -138,12 +138,12 @@ public class AutonAudience extends LinearOpMode
 //delete
 */
         encoderDrive(0.2, 6, 6, 10);
-        encoderDrive(0.2,1,1,10);
+        encoderDrive(0.2,1,1,8);
         encoderDrive(0.2, 11, -11, 10);
         encoderDrive(0.2, 15, 15, 8);
         sleep(1000);
-
-
+        encoderDrive(0.2, 20,20,10);
+        encoderDrive(0.2, 10,10,8);
 
 
         //robot.duckSpinner.setTargetPosition(-500);
