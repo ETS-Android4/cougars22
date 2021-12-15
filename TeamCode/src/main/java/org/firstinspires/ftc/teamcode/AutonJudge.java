@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -69,7 +70,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @Autonomous(name = "Judge Side")
 //@Disabled
-public class AutonJudge extends LinearOpMode {
+public class AutonJudge extends LinearOpMode
+{
 
     /* Declare OpMode members. */
     OurBot robot = new OurBot();
@@ -84,9 +86,12 @@ public class AutonJudge extends LinearOpMode {
     static final double TURNING_RADIUS_INCHES = Math.sqrt(Math.pow((11.0 + 9.0 / 16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0 / 16.0) / 2.0, 2.0));
     static final double DRIVE_SPEED = 0.3;
     static final double TURN_SPEED = 0.1;
+    static final double HEADING_THRESHOLD = 1; //How close to target angle we need to get when turning
+    static final double P_TURN_COEFF = 0.1; //How much turning should respond to error, higher = faster turns but less stability
 
     @Override
-    public void runOpMode() {
+    public void runOpMode()
+    {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Initializing Hardware");    //
         telemetry.update();
@@ -98,11 +103,11 @@ public class AutonJudge extends LinearOpMode {
         robot.init(hardwareMap);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         //parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -124,6 +129,10 @@ public class AutonJudge extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        encoderDrive(DRIVE_SPEED, 10, 10, 5);
+        gyroTurn(TURN_SPEED, 90);
+        encoderDrive(DRIVE_SPEED, 10, 10, 5);
+        gyroTurn(TURN_SPEED, 0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -137,9 +146,10 @@ public class AutonJudge extends LinearOpMode {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
+    private void encoderDrive(double speed,
+                              double leftInches, double rightInches,
+                              double timeoutS)
+    {
         int startPos;
 
         int leftFrontTarget;
@@ -148,7 +158,8 @@ public class AutonJudge extends LinearOpMode {
         int rightBackTarget;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opModeIsActive())
+        {
             startPos = robot.leftFront.getCurrentPosition();
             // Determine new target position, and pass to motor controller
             leftFrontTarget = robot.leftFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
@@ -182,7 +193,8 @@ public class AutonJudge extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) || (robot.rightFront.isBusy() || robot.rightBack.isBusy()))) {
+                    ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) || (robot.rightFront.isBusy() || robot.rightBack.isBusy())))
+            {
                 //double scaledSpeed = speed * Math.max(1 - ((double)(robot.leftFront.getCurrentPosition() - startPos) / (leftInches * COUNTS_PER_INCH)), 0.25);
                 double scaledSpeed = speed;
                 robot.leftFront.setPower(scaledSpeed);
@@ -215,13 +227,98 @@ public class AutonJudge extends LinearOpMode {
         }
     }
 
-    public void encoderTurn(double speed, double degrees, double timeoutS) {
+    private void encoderTurn(double speed, double degrees, double timeoutS)
+    {
         double inches = Math.toRadians(degrees) * TURNING_RADIUS_INCHES;
         encoderDrive(speed, inches, -inches, timeoutS);
     }
 
+    /**
+     * Method to spin on central axis to point in a new direction.
+     * Move will stop if either of these conditions occur:
+     * 1) Move gets to the heading (angle)
+     * 2) Driver stops the opmode running.
+     *
+     * @param speed Desired speed of turn.
+     * @param angle Absolute Angle (in Degrees) relative to last gyro reset.
+     *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *              If a relative angle is required, add/subtract from current heading.
+     */
     public void gyroTurn(double speed, double angle)
     {
-        imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF))
+        {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
+        }
+    }
+
+    /**
+     * Perform one cycle of closed loop heading control.
+     *
+     * @param speed  Desired speed of turn.
+     * @param angle  Absolute Angle (in Degrees) relative to last gyro reset.
+     *               0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *               If a relative angle is required, add/subtract from current heading.
+     * @param PCoeff Proportional Gain coefficient
+     * @return
+     */
+    boolean onHeading(double speed, double angle, double PCoeff)
+    {
+        double error;
+        double steer;
+        boolean onTarget = false;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD)
+        {
+            steer = 0.0;
+            leftSpeed = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else
+        {
+            steer = Range.clip(error * PCoeff, -1, 1);
+            rightSpeed = speed * steer;
+            leftSpeed = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        robot.leftFront.setPower(leftSpeed);
+        robot.leftBack.setPower(leftSpeed);
+        robot.rightFront.setPower(rightSpeed);
+        robot.rightBack.setPower(rightSpeed);
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+    /**
+     * getError determines the error between the target angle and the robot's current heading
+     *
+     * @param targetAngle Desired angle (relative to global reference established at last Gyro Reset).
+     * @return error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
+     * +ve error means the robot should turn LEFT (CCW) to reduce error.
+     */
+    private double getError(double targetAngle)
+    {
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        robotError = targetAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        while (robotError > 180) robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
     }
 }
