@@ -74,7 +74,7 @@ public class AutonJudge extends LinearOpMode
 {
 
     /* Declare OpMode members. */
-    OurBot robot = new OurBot();
+    LameDriveBot robot = new LameDriveBot();
     BNO055IMU imu = null;
     private ElapsedTime runtime = new ElapsedTime();
 
