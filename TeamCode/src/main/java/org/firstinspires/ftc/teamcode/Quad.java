@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Quad")
-//@Disabled
+
 public class Quad extends LinearOpMode {
 
     // Declare OpMode members.
