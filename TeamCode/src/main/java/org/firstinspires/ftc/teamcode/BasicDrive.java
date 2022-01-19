@@ -61,16 +61,11 @@ public class BasicDrive extends LinearOpMode {
     private double lastPowerChangeTime;
     private double armTargetPosition = 0;
     private boolean armHolding = true;
-    private double armRotatorTargetPosition;
-    private boolean armRotatorHolding = true;
 
     private final double FAST_DRIVE_POWER = 0.8;
     private final double SLOW_DRIVE_POWER = 0.5;
     private final double ARM_POWER = 0.5;
     private final double ARM_HOLD_POWER = 1;
-    private final double GRABBER_POWER = 0.3;
-    private final double ARM_ROTATOR_POWER = 0.3;
-    private final double ARM_ROTATOR_HOLD_POWER = 0.7;
     private final double DUCK_SPINNER_POWER = 0.3;
 
     @Override
@@ -84,10 +79,6 @@ public class BasicDrive extends LinearOpMode {
         armTargetPosition = 0;
         robot.arm.setTargetPosition(0);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        armRotatorTargetPosition = 0;
-        robot.armRotator.setTargetPosition(0);
-        robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -145,31 +136,12 @@ public class BasicDrive extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.right_stick_y != 0)
-            {
-                armRotatorPower = ARM_ROTATOR_POWER * gamepad2.right_stick_y * -1;
-                robot.armRotator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                armRotatorHolding = false;
-            }
-            else
-            {
-                armRotatorPower = ARM_ROTATOR_HOLD_POWER;
-                if (!armRotatorHolding)
-                {
-                    robot.armRotator.setTargetPosition(robot.armRotator.getCurrentPosition());
-                    robot.armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    armRotatorHolding = true;
-                }
-            }
-
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
             robot.leftBack.setPower(leftPower);
             robot.rightFront.setPower(rightPower);
             robot.rightBack.setPower(rightPower);
             robot.arm.setPower(armPower);
-            robot.armRotator.setPower(armRotatorPower);
-            robot.grabber.setPower(GRABBER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
             robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad1.left_trigger - gamepad1.right_trigger));
 
             // Switch modes
@@ -181,7 +153,6 @@ public class BasicDrive extends LinearOpMode {
             {
                 tankDrive = true;
             }
-
 
             // Adjust Power
             if (gamepad1.dpad_left)
@@ -214,7 +185,6 @@ public class BasicDrive extends LinearOpMode {
             telemetry.addData("Power", basePower);
             telemetry.addData("Mode", tankDrive ? "Tank Drive" : "POV Drive");
             telemetry.addData("Arm Position", armTargetPosition);
-            telemetry.addData("Arm Rotator Position", armRotatorTargetPosition);
             telemetry.update();
 
             // Sleep to make the loop have more consistent timing
