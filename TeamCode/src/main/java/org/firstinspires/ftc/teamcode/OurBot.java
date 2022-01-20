@@ -60,6 +60,7 @@ public class OurBot
     public DcMotor  rightFront  = null;
     public DcMotor  rightBack   = null;
     public DcMotor  arm         = null;
+    public DcMotor  intake      = null;
     public DcMotor  duckSpinner = null;
 
     /* local OpMode members. */
@@ -82,6 +83,7 @@ public class OurBot
         rightFront  = hwMap.get(DcMotor.class, "rightFront");
         rightBack   = hwMap.get(DcMotor.class, "rightBack");
         arm         = hwMap.get(DcMotor.class, "arm");
+        intake      = hwMap.get(DcMotor.class, "intake");
         duckSpinner = hwMap.get(DcMotor.class, "duckSpinner");
 
         //Initialize Motor Direction
@@ -90,6 +92,7 @@ public class OurBot
         rightFront.setDirection(Direction.REVERSE);
         rightBack.setDirection(Direction.REVERSE);
         arm.setDirection(Direction.FORWARD);
+        intake.setDirection(Direction.FORWARD);
         duckSpinner.setDirection(Direction.FORWARD);
 
         //Set all motors to zero power
@@ -98,6 +101,7 @@ public class OurBot
         rightFront.setPower(0);
         rightBack.setPower(0);
         arm.setPower(0);
+        intake.setPower(0);
         duckSpinner.setPower(0);
 
         //Reset all encoders
@@ -106,6 +110,7 @@ public class OurBot
         rightFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(RunMode.STOP_AND_RESET_ENCODER);
         duckSpinner.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         //Set all motors to run with encoder
@@ -114,6 +119,7 @@ public class OurBot
         rightFront.setMode(RunMode.RUN_USING_ENCODER);
         rightBack.setMode(RunMode.RUN_USING_ENCODER);
         arm.setMode(RunMode.RUN_USING_ENCODER);
+        intake.setMode(RunMode.RUN_USING_ENCODER);
         duckSpinner.setMode(RunMode.RUN_USING_ENCODER);
     }
  }

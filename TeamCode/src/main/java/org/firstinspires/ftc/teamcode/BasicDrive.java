@@ -66,6 +66,7 @@ public class BasicDrive extends LinearOpMode {
     private final double SLOW_DRIVE_POWER = 0.5;
     private final double ARM_POWER = 0.5;
     private final double ARM_HOLD_POWER = 1;
+    private final double INTAKE_POWER = 0.5;
     private final double DUCK_SPINNER_POWER = 0.3;
 
     @Override
@@ -94,7 +95,7 @@ public class BasicDrive extends LinearOpMode {
             double leftPower;
             double rightPower;
             double armPower;
-            double armRotatorPower;
+            double intakePower;
 
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
@@ -119,6 +120,7 @@ public class BasicDrive extends LinearOpMode {
             leftPower *= basePower;
             rightPower *= basePower;
 
+            /*
             if (gamepad2.left_stick_y != 0)
             {
                 armPower = ARM_POWER * gamepad2.left_stick_y * -1;
@@ -135,6 +137,9 @@ public class BasicDrive extends LinearOpMode {
                     armHolding = true;
                 }
             }
+            */
+            armPower = ARM_POWER * gamepad2.left_stick_y;
+            intakePower = INTAKE_POWER * gamepad2.right_stick_y;
 
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
@@ -142,6 +147,7 @@ public class BasicDrive extends LinearOpMode {
             robot.rightFront.setPower(rightPower);
             robot.rightBack.setPower(rightPower);
             robot.arm.setPower(armPower);
+            robot.intake.setPower(intakePower);
             robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad1.left_trigger - gamepad1.right_trigger));
 
             // Switch modes
