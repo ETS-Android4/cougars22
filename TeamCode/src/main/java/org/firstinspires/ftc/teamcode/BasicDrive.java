@@ -64,9 +64,9 @@ public class BasicDrive extends LinearOpMode {
 
     private final double FAST_DRIVE_POWER = 0.8;
     private final double SLOW_DRIVE_POWER = 0.5;
-    private final double ARM_POWER = 0.5;
+    private final double ARM_POWER = 0.4;
     private final double ARM_HOLD_POWER = 1;
-    private final double INTAKE_POWER = 0.5;
+    private final double INTAKE_POWER = 0.8;
     private final double DUCK_SPINNER_POWER = 0.3;
 
     @Override
@@ -77,15 +77,17 @@ public class BasicDrive extends LinearOpMode {
 
         robot.init(hardwareMap);
 
-        armTargetPosition = 0;
-        robot.arm.setTargetPosition(0);
-        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+       // armTargetPosition = 0;
+       // robot.arm.setTargetPosition(0);
+       // robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
         lastPowerChangeTime = runtime.time();
+        public static final robot.arm.ZeroPowerBehavior BRAKE
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
@@ -111,8 +113,8 @@ public class BasicDrive extends LinearOpMode {
             // - This uses basic math to combine motions and is easier to drive straight.
             else
             {
-                double drive = -gamepad1.left_stick_y;
-                double turn = gamepad1.right_stick_x;
+                double drive = gamepad1.left_stick_y;
+                double turn = -gamepad1.right_stick_x;
                 leftPower = Range.clip(drive + turn, -1.0, 1.0);
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
             }
@@ -144,8 +146,8 @@ public class BasicDrive extends LinearOpMode {
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
             robot.leftBack.setPower(leftPower);
-            robot.rightFront.setPower(rightPower);
-            robot.rightBack.setPower(rightPower);
+            robot.rightFront.setPower(-rightPower);
+            robot.rightBack.setPower(-rightPower);
             robot.arm.setPower(armPower);
             robot.intake.setPower(intakePower);
             robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad1.left_trigger - gamepad1.right_trigger));
