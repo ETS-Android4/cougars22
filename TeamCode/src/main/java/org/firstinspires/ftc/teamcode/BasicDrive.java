@@ -76,7 +76,10 @@ public class BasicDrive extends LinearOpMode {
         telemetry.update();
 
         robot.init(hardwareMap);
-
+        robot.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.arm.setTargetPosition(robot.arm.getCurrentPosition());
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm.setPower(ARM_HOLD_POWER);
 
        // armTargetPosition = 0;
        // robot.arm.setTargetPosition(0);
@@ -87,7 +90,6 @@ public class BasicDrive extends LinearOpMode {
         runtime.reset();
 
         lastPowerChangeTime = runtime.time();
-        public static final robot.arm.ZeroPowerBehavior BRAKE
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
