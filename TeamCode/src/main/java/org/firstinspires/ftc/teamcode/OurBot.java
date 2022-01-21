@@ -63,6 +63,8 @@ public class OurBot
     public DcMotor  intake      = null;
     public DcMotor  duckSpinner = null;
 
+    public Servo    armHold     = null;
+
     /* local OpMode members. */
     HardwareMap hwMap           = null;
     private ElapsedTime period  = new ElapsedTime();
@@ -85,6 +87,7 @@ public class OurBot
         arm         = hwMap.get(DcMotor.class, "arm");
         intake      = hwMap.get(DcMotor.class, "intake");
         duckSpinner = hwMap.get(DcMotor.class, "duckSpinner");
+        armHold     = hwMap.get(Servo.class, "armHold");
 
         //Initialize Motor Direction
         leftFront.setDirection(Direction.FORWARD);
@@ -110,17 +113,19 @@ public class OurBot
         rightFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(RunMode.STOP_AND_RESET_ENCODER);
-        duckSpinner.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        //intake.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        //duckSpinner.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
-        //Set all motors to run with encoder
+        //Set motors to run with encoder
         leftFront.setMode(RunMode.RUN_USING_ENCODER);
         leftBack.setMode(RunMode.RUN_USING_ENCODER);
         rightFront.setMode(RunMode.RUN_USING_ENCODER);
         rightBack.setMode(RunMode.RUN_USING_ENCODER);
         arm.setMode(RunMode.RUN_USING_ENCODER);
-        intake.setMode(RunMode.RUN_USING_ENCODER);
-        duckSpinner.setMode(RunMode.RUN_USING_ENCODER);
+
+        //Intake and Duck Spinner don't have encoders
+        intake.setMode(RunMode.RUN_WITHOUT_ENCODER);
+        duckSpinner.setMode(RunMode.RUN_WITHOUT_ENCODER);
     }
  }
 
