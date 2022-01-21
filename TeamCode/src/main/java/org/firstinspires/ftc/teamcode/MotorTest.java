@@ -21,23 +21,10 @@ public class MotorTest extends LinearOpMode
     private boolean leftDownLastFrame = false;
     private boolean rightDownLastFrame = false;
     private ElapsedTime runtime = new ElapsedTime();
-    private GyroSensor gyro;
 
     @Override
     public void runOpMode()
     {
-        gyro = hardwareMap.get(GyroSensor.class, "gyro");
-
-        telemetry.addData(">", "Calibrating Gyro");
-        telemetry.update();
-        gyro.calibrate();
-        while (!isStopRequested() && gyro.isCalibrating())  {
-            sleep(50);
-            idle();
-        }
-        telemetry.addData(">", "Gyro Ready");
-        telemetry.update();
-
         List<DcMotor> motors = hardwareMap.getAll(DcMotor.class);
         List<String> motorNames = new ArrayList<>();
         for (DcMotor motor : motors)
@@ -102,7 +89,6 @@ public class MotorTest extends LinearOpMode
             telemetry.addData("Motor", motorNames.get(motorIndex));
             telemetry.addData("Motor Position", currMotor.getCurrentPosition());
             telemetry.addData("Power", power);
-            telemetry.addData("Headings", "x: %d, y: %d, z: %d", gyro.rawX(), gyro.rawY(), gyro.rawZ());
             telemetry.update();
         }
     }
