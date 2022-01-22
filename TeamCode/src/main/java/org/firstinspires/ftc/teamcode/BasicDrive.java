@@ -67,7 +67,7 @@ public class BasicDrive extends LinearOpMode {
     private final double ARM_POWER = 0.4;
     private final double ARM_HOLD_POWER = 1;
     private final double INTAKE_POWER = 0.8;
-    private final double DUCK_SPINNER_POWER = 0.3;
+    private final double DUCK_SPINNER_POWER = 0.6;
 
     @Override
     public void runOpMode() {
@@ -77,9 +77,6 @@ public class BasicDrive extends LinearOpMode {
 
         robot.init(hardwareMap);
         robot.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.arm.setTargetPosition(robot.arm.getCurrentPosition());
-        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.arm.setPower(ARM_HOLD_POWER);
 
        // armTargetPosition = 0;
        // robot.arm.setTargetPosition(0);
@@ -90,6 +87,8 @@ public class BasicDrive extends LinearOpMode {
         runtime.reset();
 
         lastPowerChangeTime = runtime.time();
+
+        robot.armHold.setPosition(0);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
@@ -148,13 +147,14 @@ public class BasicDrive extends LinearOpMode {
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
             robot.leftBack.setPower(leftPower);
-            robot.rightFront.setPower(-rightPower);
-            robot.rightBack.setPower(-rightPower);
+            robot.rightFront.setPower(rightPower);
+            robot.rightBack.setPower(rightPower);
             robot.arm.setPower(armPower);
             robot.intake.setPower(intakePower);
-            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad1.left_trigger - gamepad1.right_trigger));
+            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
 
             // Switch modes
+            /*
             if (gamepad1.dpad_up)
             {
                 tankDrive = false;
@@ -163,6 +163,7 @@ public class BasicDrive extends LinearOpMode {
             {
                 tankDrive = true;
             }
+            */
 
             // Adjust Power
             if (gamepad1.dpad_left)

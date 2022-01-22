@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.*;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
@@ -90,12 +91,12 @@ public class OurBot
         armHold     = hwMap.get(Servo.class, "armHold");
 
         //Initialize Motor Direction
-        leftFront.setDirection(Direction.FORWARD);
-        leftBack.setDirection(Direction.FORWARD);
-        rightFront.setDirection(Direction.REVERSE);
-        rightBack.setDirection(Direction.REVERSE);
-        arm.setDirection(Direction.FORWARD);
-        intake.setDirection(Direction.FORWARD);
+        leftFront.setDirection(Direction.REVERSE);
+        leftBack.setDirection(Direction.REVERSE);
+        rightFront.setDirection(Direction.FORWARD);
+        rightBack.setDirection(Direction.FORWARD);
+        arm.setDirection(Direction.REVERSE);
+        intake.setDirection(Direction.REVERSE);
         duckSpinner.setDirection(Direction.FORWARD);
 
         //Set all motors to zero power

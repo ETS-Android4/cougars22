@@ -74,7 +74,7 @@ public class AutonBasic extends LinearOpMode
 {
 
     /* Declare OpMode members. */
-    LameDriveBot robot = new LameDriveBot();
+    OurBot robot = new OurBot();
     BNO055IMU imu = null;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -84,7 +84,7 @@ public class AutonBasic extends LinearOpMode
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * Math.PI);
     static final double TURNING_RADIUS_INCHES = Math.sqrt(Math.pow((11.0 + 9.0 / 16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0 / 16.0) / 2.0, 2.0));
-    static final double DRIVE_SPEED = 0.3;
+    static final double DRIVE_SPEED = 0.5;
     static final double TURN_SPEED = 0.1;
     static final double HEADING_THRESHOLD = 1; //How close to target angle we need to get when turning
     static final double P_TURN_COEFF = 0.1; //How much turning should respond to error, higher = faster turns but less stability
@@ -129,10 +129,16 @@ public class AutonBasic extends LinearOpMode
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        robot.armHold.setPosition(0);
+
+
+        encoderDrive(DRIVE_SPEED, 30, 30, 5);
+        /*
         encoderDrive(DRIVE_SPEED, 10, 10, 5);
         gyroTurn(TURN_SPEED, 90);
         encoderDrive(DRIVE_SPEED, 10, 10, 5);
         gyroTurn(TURN_SPEED, 0);
+        */
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
