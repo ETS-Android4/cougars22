@@ -143,7 +143,7 @@ public class AutonJoe extends LinearOpMode
         encoderDrive(0.2, 11, -11, 10);
         encoderDrive(0.2, 25, 25, 8);
         encoderDrive(0.2, -5.5, 0, 10);
-        encoderDrive(0.1,-5,-5,5);
+        encoderDrive(0.3,5,5,5);
         robot.duckSpinner.setPower(1);
         sleep(2000);
         robot.duckSpinner.setPower(0);
