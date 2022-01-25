@@ -82,7 +82,7 @@ public class AutonBasic extends LinearOpMode
     static final double DRIVE_GEAR_REDUCTION = 2.89 * 3.61;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 3.54330709;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * Math.PI);
+            (WHEEL_DIAMETER_INCHES * Math.PI) * -1; // Negated because the encoders are backwards for some reason
     static final double TURNING_RADIUS_INCHES = Math.sqrt(Math.pow((11.0 + 9.0 / 16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0 / 16.0) / 2.0, 2.0));
     static final double DRIVE_SPEED = 0.5;
     static final double TURN_SPEED = 0.1;
@@ -132,13 +132,12 @@ public class AutonBasic extends LinearOpMode
         robot.armHold.setPosition(0);
 
 
-        encoderDrive(DRIVE_SPEED, 30, 30, 5);
-        /*
+        //encoderDrive(DRIVE_SPEED, 30, 30, 5);
+
         encoderDrive(DRIVE_SPEED, 10, 10, 5);
         gyroTurn(TURN_SPEED, 90);
         encoderDrive(DRIVE_SPEED, 10, 10, 5);
         gyroTurn(TURN_SPEED, 0);
-        */
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
