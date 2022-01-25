@@ -84,10 +84,10 @@ public class AutonBasic extends LinearOpMode
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * Math.PI) * -1; // Negated because the encoders are backwards for some reason
     static final double TURNING_RADIUS_INCHES = Math.sqrt(Math.pow((11.0 + 9.0 / 16.0) / 2.0, 2.0) + Math.pow((13.0 + 1.0 / 16.0) / 2.0, 2.0));
-    static final double DRIVE_SPEED = 0.5;
+    static final double DRIVE_SPEED = 0.3;
     static final double TURN_SPEED = 0.1;
     static final double HEADING_THRESHOLD = 1; //How close to target angle we need to get when turning
-    static final double P_TURN_COEFF = 0.1; //How much turning should respond to error, higher = faster turns but less stability
+    static final double P_TURN_COEFF = 0.01; //How much turning should respond to error, higher = faster turns but less stability
 
     @Override
     public void runOpMode()
@@ -155,7 +155,10 @@ public class AutonBasic extends LinearOpMode
                               double leftInches, double rightInches,
                               double timeoutS)
     {
-        int startPos;
+        int leftFrontStart;
+        int leftBackStart;
+        int rightFrontStart;
+        int rightBackStart;
 
         int leftFrontTarget;
         int leftBackTarget;
@@ -165,7 +168,10 @@ public class AutonBasic extends LinearOpMode
         // Ensure that the opmode is still active
         if (opModeIsActive())
         {
-            startPos = robot.leftFront.getCurrentPosition();
+            leftFrontStart = robot.leftFront.getCurrentPosition();
+            leftBackStart = robot.leftBack.getCurrentPosition();
+            rightFrontStart = robot.rightFront.getCurrentPosition();
+            rightBackStart = robot.rightBack.getCurrentPosition();
             // Determine new target position, and pass to motor controller
             leftFrontTarget = robot.leftFront.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
             leftBackTarget = robot.leftBack.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
@@ -200,12 +206,14 @@ public class AutonBasic extends LinearOpMode
                     (runtime.seconds() < timeoutS) &&
                     ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) || (robot.rightFront.isBusy() || robot.rightBack.isBusy())))
             {
-                //double scaledSpeed = speed * Math.max(1 - ((double)(robot.leftFront.getCurrentPosition() - startPos) / (leftInches * COUNTS_PER_INCH)), 0.25);
-                double scaledSpeed = speed;
-                robot.leftFront.setPower(scaledSpeed);
-                robot.leftBack.setPower(scaledSpeed);
-                robot.rightFront.setPower(scaledSpeed);
-                robot.rightBack.setPower(scaledSpeed);
+                double leftFrontScale = Math.max(1 - ((double)robot.leftFront.getCurrentPosition() - leftFrontStart) / (leftFrontTarget - leftFrontStart), 0.25);
+                double leftBackScale = Math.max(1 - ((double)robot.leftBack.getCurrentPosition() - leftBackStart) / (leftBackTarget - leftBackStart), 0.25);
+                double rightFrontScale = Math.max(1 - ((double)robot.rightFront.getCurrentPosition() - rightFrontStart) / (rightFrontTarget - rightFrontStart), 0.25);
+                double rightBackScale = Math.max(1 - ((double)robot.rightBack.getCurrentPosition() - rightBackStart) / (rightBackTarget - rightBackStart), 0.25);
+                robot.leftFront.setPower(speed * leftFrontScale);
+                robot.leftBack.setPower(speed * leftBackScale);
+                robot.rightFront.setPower(speed * rightFrontScale);
+                robot.rightBack.setPower(speed * rightBackScale);
                 // Display it for the driver.
                 telemetry.addData("Path1", "Running to %7d, %7d, %7d, %7d", leftFrontTarget, leftBackTarget, rightFrontTarget, rightBackTarget);
                 telemetry.addData("Path2", "Running at %7d, %7d, %7d, %7d",
@@ -291,8 +299,9 @@ public class AutonBasic extends LinearOpMode
         else
         {
             steer = Range.clip(error * PCoeff, -1, 1);
-            rightSpeed = speed * steer;
-            leftSpeed = -rightSpeed;
+            steer = Math.max(0.15, steer);
+            leftSpeed = speed * steer;
+            rightSpeed = -leftSpeed;
         }
 
         // Send desired speeds to motors.
@@ -320,7 +329,7 @@ public class AutonBasic extends LinearOpMode
     {
         double robotError;
 
-        // calculate error in -179 to +180 range  (
+        // calculate error in -179 to +180 range
         robotError = targetAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         while (robotError > 180) robotError -= 360;
         while (robotError <= -180) robotError += 360;
