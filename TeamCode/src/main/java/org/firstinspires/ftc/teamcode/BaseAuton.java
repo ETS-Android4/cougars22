@@ -18,7 +18,9 @@ public abstract class BaseAuton extends LinearOpMode
     BNO055IMU imu = null;
     private ElapsedTime runtime = new ElapsedTime();
     static final double HEADING_THRESHOLD = 1; //How close to target angle we need to get when turning
-    static final double P_TURN_COEFF = 0.01; //How much turning should respond to error, higher = faster turns but less stability
+    static final double TURN_K_P = 0.01; //How much turning should respond to error, higher = faster turns but less stability
+    static final double TURN_K_I = 0.01;
+    static final double TURN_K_D = 0.01;
 
     @Override
     public void runOpMode()
@@ -56,24 +58,6 @@ public abstract class BaseAuton extends LinearOpMode
                 robot.rightFront.getCurrentPosition(),
                 robot.rightBack.getCurrentPosition());
         telemetry.update();
-
-        /*
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-
-        robot.armHold.setPosition(0);
-
-
-        //encoderDrive(DRIVE_SPEED, 30, 30, 5);
-
-        encoderDrive(DRIVE_SPEED, 10, 10, 5);
-        gyroTurn(TURN_SPEED, 90);
-        encoderDrive(DRIVE_SPEED, 10, 10, 5);
-        gyroTurn(TURN_SPEED, 0);
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        */
     }
 
     /*
@@ -186,63 +170,61 @@ public abstract class BaseAuton extends LinearOpMode
      */
     protected void gyroTurn(double speed, double angle)
     {
-
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF))
-        {
-            // Update telemetry & Allow time for other processes to run.
-            telemetry.update();
-        }
-    }
-
-    /**
-     * Perform one cycle of closed loop heading control.
-     *
-     * @param speed  Desired speed of turn.
-     * @param angle  Absolute Angle (in Degrees) relative to last gyro reset.
-     *               0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *               If a relative angle is required, add/subtract from current heading.
-     * @param PCoeff Proportional Gain coefficient
-     * @return
-     */
-    private boolean onHeading(double speed, double angle, double PCoeff)
-    {
         double error;
+        double lastError;
+        double time;
+        double lastTime;
+        double derivative;
+        double integral = 0;
         double steer;
         boolean onTarget = false;
         double leftSpeed;
         double rightSpeed;
+        // keep looping while we are still active, and not on heading.
 
-        // determine turn power based on +/- error
         error = getError(angle);
-
-        if (Math.abs(error) <= HEADING_THRESHOLD)
+        time = runtime.seconds();
+        while (opModeIsActive() && !onTarget)
         {
-            steer = 0.0;
-            leftSpeed = 0.0;
-            rightSpeed = 0.0;
-            onTarget = true;
+            lastError = error;
+            error = getError(angle);
+
+            lastTime = time;
+            if (time != lastTime)
+                derivative = (error - lastError) / (runtime.seconds() - lastTime);
+            else
+                derivative = 0;
+
+            integral += error;
+
+            if (Math.abs(error) <= HEADING_THRESHOLD)
+            {
+                steer = 0.0;
+                leftSpeed = 0.0;
+                rightSpeed = 0.0;
+                onTarget = true;
+            }
+            else
+            {
+                steer = Range.clip(error * TURN_K_P + derivative * TURN_K_D + integral * TURN_K_I, -1, 1);
+                steer = Math.max(0.15, steer);
+                leftSpeed = speed * steer;
+                rightSpeed = -leftSpeed;
+            }
+
+            // Send desired speeds to motors.
+            robot.leftFront.setPower(leftSpeed);
+            robot.leftBack.setPower(leftSpeed);
+            robot.rightFront.setPower(rightSpeed);
+            robot.rightBack.setPower(rightSpeed);
+
+            // Display it for the driver.
+            telemetry.addData("Target", "%5.2f", angle);
+            telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+            telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
         }
-        else
-        {
-            steer = Range.clip(error * PCoeff, -1, 1);
-            steer = Math.max(0.15, steer);
-            leftSpeed = speed * steer;
-            rightSpeed = -leftSpeed;
-        }
-
-        // Send desired speeds to motors.
-        robot.leftFront.setPower(leftSpeed);
-        robot.leftBack.setPower(leftSpeed);
-        robot.rightFront.setPower(rightSpeed);
-        robot.rightBack.setPower(rightSpeed);
-
-        // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
-
-        return onTarget;
     }
 
     /**
