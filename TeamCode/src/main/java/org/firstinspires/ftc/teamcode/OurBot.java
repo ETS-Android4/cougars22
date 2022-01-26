@@ -55,6 +55,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class OurBot
 {
+    public static final double COUNTS_PER_MOTOR_REV = 28;    // REV Ultraplanetary
+    public static final double DRIVE_GEAR_REDUCTION = 2.89 * 3.61;     // This is < 1.0 if geared UP
+    public static final double WHEEL_DIAMETER_INCHES = 3.54330709;     // For figuring circumference
+    public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * Math.PI) * -1; // Negated because the encoders are backwards for some reason
+
     /* Public OpMode members. */
     public DcMotor  leftFront   = null;
     public DcMotor  leftBack    = null;
