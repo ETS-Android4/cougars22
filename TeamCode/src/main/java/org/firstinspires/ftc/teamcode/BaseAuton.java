@@ -180,7 +180,6 @@ public abstract class BaseAuton extends LinearOpMode
         boolean onTarget = false;
         double leftSpeed;
         double rightSpeed;
-        // keep looping while we are still active, and not on heading.
 
         error = getError(angle);
         time = runtime.seconds();
@@ -188,14 +187,15 @@ public abstract class BaseAuton extends LinearOpMode
         {
             lastError = error;
             error = getError(angle);
-
             lastTime = time;
+            time = runtime.seconds();
+
             if (time != lastTime)
                 derivative = (error - lastError) / (runtime.seconds() - lastTime);
             else
                 derivative = 0;
 
-            integral += error;
+            integral += error * (runtime.seconds() - lastTime);
 
             if (Math.abs(error) <= HEADING_THRESHOLD)
             {
@@ -221,7 +221,9 @@ public abstract class BaseAuton extends LinearOpMode
             // Display it for the driver.
             telemetry.addData("Target", "%5.2f", angle);
             telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-            telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+            telemetry.addData("Derivative", "%5.2f", derivative);
+            telemetry.addData("Integral", "5.2f", integral);
+            telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
             // Update telemetry & Allow time for other processes to run.
             telemetry.update();
         }
