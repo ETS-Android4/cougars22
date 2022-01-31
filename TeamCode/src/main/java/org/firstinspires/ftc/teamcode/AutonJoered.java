@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import androidx.appcompat.widget.MenuPopupWindow;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -63,9 +61,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "JOE IS THE BEST BLUE")
+@Autonomous(name = "JOE IS THE BEST RED")
 //@Disabled
-public class AutonJoe extends LinearOpMode
+public class AutonJoered extends LinearOpMode
 {
 
     /* Declare OpMode members. */
@@ -140,20 +138,20 @@ public class AutonJoe extends LinearOpMode
         // plus minus 13 or 11 idk brah
         encoderDrive(0.3, -6, -6, 10);
         encoderDrive(0.3,1,1,8);
-        encoderDrive(0.2, 11, -11, 10);
+        encoderDrive(0.2, -11, 11, 10);
         encoderDrive(0.3, 25, 25, 8);
-        encoderDrive(0.2, -5.5, 0, 10);
+        encoderDrive(0.2, -0, -5.5, 10);
         encoderDrive(0.3,5,5,5);
         encoderDrive(0.1, 1, 1, 1);
         robot.duckSpinner.setPower(-0.6);
         sleep(2500);
         robot.duckSpinner.setPower(0);
         encoderDrive(0.2, -20,-20,10);
-        encoderDrive(0.2, 0, -5.5, 10);
+        encoderDrive(0.2, -5.5, -0, 10);
         //encoderDrive(0.2, -10,10,8);
-       encoderDrive(0.2, -11, 11, 10);
+       encoderDrive(0.2, 11, -11, 10);
         encoderDrive(0.3,-14,-14,5);
-        encoderDrive(0.2, -11, 11, 10);
+        encoderDrive(0.2, 11, -11, 10);
         encoderDrive(0.3, -19, -19, 10);
 //cool
         //robot.duckSpinner.setTargetPosition(-500);
