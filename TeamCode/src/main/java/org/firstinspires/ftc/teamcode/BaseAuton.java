@@ -18,9 +18,6 @@ public abstract class BaseAuton extends LinearOpMode
     BNO055IMU imu = null;
     private ElapsedTime runtime = new ElapsedTime();
     static final double HEADING_THRESHOLD = 1; //How close to target angle we need to get when turning
-    static final double TURN_K_P = 0.01; //How much turning should respond to error, higher = faster turns but less stability
-    static final double TURN_K_I = 0.01;
-    static final double TURN_K_D = 0.01;
 
     @Override
     public void runOpMode()
@@ -168,7 +165,7 @@ public abstract class BaseAuton extends LinearOpMode
      *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *              If a relative angle is required, add/subtract from current heading.
      */
-    protected void gyroTurn(double speed, double angle)
+    protected void gyroTurn(double speed, double angle, double Kp, double Ki, double Kd)
     {
         double error;
         double lastError;
@@ -206,8 +203,15 @@ public abstract class BaseAuton extends LinearOpMode
             }
             else
             {
-                steer = Range.clip(error * TURN_K_P + derivative * TURN_K_D + integral * TURN_K_I, -1, 1);
-                steer = Math.max(0.15, steer);
+                steer = Range.clip(error * Kp + derivative * Kd + integral * Ki, -1, 1);
+                if (steer > 0 && steer < 0.15)
+                {
+                    steer = 0.15;
+                }
+                else if (steer < 0 && steer > -0.15)
+                {
+                    steer = -0.15;
+                }
                 leftSpeed = speed * steer;
                 rightSpeed = -leftSpeed;
             }
