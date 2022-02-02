@@ -143,7 +143,7 @@ public class AutonJoered extends LinearOpMode
         encoderDrive(0.2, -0, -5.5, 10);
         encoderDrive(0.3,5,5,5);
         encoderDrive(0.1, 1, 1, 1);
-        robot.duckSpinner.setPower(-0.6);
+        robot.duckSpinner.setPower(0.6);
         sleep(2500);
         robot.duckSpinner.setPower(0);
         encoderDrive(0.2, -20,-20,10);
