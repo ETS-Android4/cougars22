@@ -64,6 +64,10 @@ public class AutonBasic extends BaseAuton
 {
     static final double DRIVE_SPEED = 0.3;
     static final double TURN_SPEED = 0.1;
+    static final double TURN_K_P = 0.01; //How much turning should respond to error, higher = faster turns but less stability
+    static final double TURN_K_I = 0.01;
+    static final double TURN_K_D = 0.01;
+
     @Override
     public void runOpMode()
     {
@@ -84,5 +88,9 @@ public class AutonBasic extends BaseAuton
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+    }
+
+    protected void gyroTurn(double speed, double angle) {
+        super.gyroTurn(speed, angle, TURN_K_P, TURN_K_I, TURN_K_D);
     }
 }
