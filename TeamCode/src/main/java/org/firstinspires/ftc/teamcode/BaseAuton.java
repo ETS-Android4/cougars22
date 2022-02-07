@@ -17,7 +17,7 @@ public abstract class BaseAuton extends LinearOpMode
     OurBot robot = new OurBot();
     BNO055IMU imu = null;
     private ElapsedTime runtime = new ElapsedTime();
-    static final double HEADING_THRESHOLD = 1; //How close to target angle we need to get when turning
+    static final double HEADING_THRESHOLD = 0.01; //How close to target angle we need to get when turning
 
     @Override
     public void runOpMode()
@@ -226,7 +226,7 @@ public abstract class BaseAuton extends LinearOpMode
             telemetry.addData("Target", "%5.2f", angle);
             telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
             telemetry.addData("Derivative", "%5.2f", derivative);
-            telemetry.addData("Integral", "5.2f", integral);
+            telemetry.addData("Integral", "%5.2f", integral);
             telemetry.addData("Speed", "%5.2f:%5.2f", leftSpeed, rightSpeed);
             // Update telemetry & Allow time for other processes to run.
             telemetry.update();

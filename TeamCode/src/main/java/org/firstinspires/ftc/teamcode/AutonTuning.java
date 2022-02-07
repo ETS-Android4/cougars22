@@ -13,7 +13,6 @@ public class AutonTuning extends BaseAuton
         double Kp = 0.01;
         double Ki = 0;
         double Kd = 0;
-        double turnSpeed = 0.1;
         double delta = 0.01;
         int selectedItem = 0;
         boolean upHeld = false;
@@ -32,7 +31,7 @@ public class AutonTuning extends BaseAuton
             boolean rightPressed = gamepad1.dpad_right;
             boolean aPressed = gamepad1.a;
 
-            if (upPressed && !upHeld)
+            if (rightPressed && !rightHeld)
             {
                 switch(selectedItem)
                 {
@@ -46,14 +45,11 @@ public class AutonTuning extends BaseAuton
                         Kd += delta;
                         break;
                     case 3:
-                        turnSpeed += delta;
-                        break;
-                    case 4:
                         delta *= 10;
                         break;
                 }
             }
-            else if (downPressed && !downHeld)
+            else if (leftPressed && !leftHeld)
             {
                 switch(selectedItem)
                 {
@@ -67,26 +63,23 @@ public class AutonTuning extends BaseAuton
                         Kd -= delta;
                         break;
                     case 3:
-                        turnSpeed -= delta;
-                        break;
-                    case 4:
                         delta /= 10;
                         break;
                 }
             }
-            else if (leftPressed && !leftHeld)
+            else if (upPressed && !upHeld)
             {
-                selectedItem = (selectedItem - 1) % 5;
+                selectedItem = (selectedItem + 4) % 5;
             }
-            else if (rightPressed && !rightHeld)
+            else if (downPressed && !downHeld)
             {
                 selectedItem = (selectedItem + 1) % 5;
             }
             else if (aPressed && !aHeld)
             {
-                gyroTurn(turnSpeed, 90, Kp, Ki, Kd);
+                gyroTurn(1, 90, Kp, Ki, Kd);
                 sleep(1000);
-                gyroTurn(turnSpeed, 0, Kp, Ki, Kd);
+                gyroTurn(1, 0, Kp, Ki, Kd);
             }
 
             upHeld = upPressed;
@@ -98,7 +91,8 @@ public class AutonTuning extends BaseAuton
             telemetry.addData("Kp", Kp);
             telemetry.addData("Ki", Ki);
             telemetry.addData("Kd", Kd);
-            telemetry.addData("Selected", selectedItem == 0 ? "Kp" : selectedItem == 1 ? "Ki" : selectedItem == 2 ? "Kd" : selectedItem == 3 ? "turnSpeed" : "delta");
+            telemetry.addData("delta", delta);
+            telemetry.addData("Selected", selectedItem == 0 ? "Kp" : selectedItem == 1 ? "Ki" : selectedItem == 2 ? "Kd" : "delta");
             telemetry.update();
         }
     }
