@@ -76,7 +76,6 @@ public class BasicDrive extends LinearOpMode {
         telemetry.update();
 
         robot.init(hardwareMap);
-        robot.arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
        // armTargetPosition = 0;
        // robot.arm.setTargetPosition(0);
