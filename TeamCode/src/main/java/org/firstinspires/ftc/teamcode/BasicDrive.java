@@ -67,7 +67,7 @@ public class BasicDrive extends LinearOpMode {
     private final double ARM_POWER = 0.4;
     private final double ARM_HOLD_POWER = 1;
     private final double INTAKE_POWER = 0.8;
-    private final double DUCK_SPINNER_POWER = 0.6;
+    private final double DUCK_SPINNER_POWER = 0.65;
 
     @Override
     public void runOpMode() {

@@ -63,7 +63,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "JOE IS THE BEST BLUE")
+@Autonomous(name = "BLUE IS JOE")
 //@Disabled
 public class AutonJoe extends LinearOpMode
 {
@@ -138,10 +138,10 @@ public class AutonJoe extends LinearOpMode
 //delete
 */
         // plus minus 13 or 11 idk brah
-        encoderDrive(0.2, -6, -6, 10);
-        encoderDrive(0.2,1,1,8);
-        encoderDrive(0.2, 11, -11, 10);
-        encoderDrive(0.2, 25, 25, 8);
+        encoderDrive(0.4, -6, -6, 10);
+        encoderDrive(0.4,1,1,8);
+        encoderDrive(0.4, 11, -11, 10);
+        encoderDrive(0.4, 25, 25, 8);
         encoderDrive(0.2, -5.5, 0, 10);
         encoderDrive(0.3,5,5,4);
         encoderDrive(0.1, 1, 1, 1);
@@ -153,7 +153,7 @@ public class AutonJoe extends LinearOpMode
         encoderDrive(0.2, -11, 11, 10);
         encoderDrive(0.3, -16,  -16, 5);
         encoderDrive(0.2, 11, -11, 10);
-        encoderDrive(0.3, -27, -27, 10);
+        encoderDrive(0.3, 27, 27, 10);
 
 
 //cool

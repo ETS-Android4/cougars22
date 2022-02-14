@@ -61,7 +61,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "JOE IS THE BEST RED")
+@Autonomous(name = "IM THE RED GUY ")
 //@Disabled
 public class AutonJoered extends LinearOpMode
 {
@@ -136,10 +136,10 @@ public class AutonJoered extends LinearOpMode
 //delete
 */
         // plus minus 13 or 11 idk brah
-        encoderDrive(0.3, -6, -6, 10);
-        encoderDrive(0.3,1,1,8);
-        encoderDrive(0.2, -11, 11, 10);
-        encoderDrive(0.3, 25, 25, 8);
+        encoderDrive(0.4, -6, -6, 10);
+        encoderDrive(0.4,1,1,8);
+        encoderDrive(0.4, -11, 11, 10);
+        encoderDrive(0.4, 25, 25, 8);
         encoderDrive(0.2, -0, -5.5, 10);
         encoderDrive(0.3,5,5,5);
         encoderDrive(0.1, 1, 1, 1);
@@ -154,6 +154,7 @@ public class AutonJoered extends LinearOpMode
         encoderDrive(0.2, 11, -11, 10);
         encoderDrive(0.3, -19, -19, 10);
 //cool
+        //REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
         //robot.duckSpinner.setTargetPosition(-500);
         //robot.duckSpinner.setPower(0.3);
 
