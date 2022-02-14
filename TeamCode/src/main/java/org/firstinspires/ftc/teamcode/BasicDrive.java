@@ -58,6 +58,8 @@ public class BasicDrive extends LinearOpMode {
     private OurBot robot = new OurBot();
     private boolean tankDrive = false;
     private double basePower = 0.8;
+    private boolean autoIntaking = false;
+    private double autoIntakeTargetPosition = 0;
 
     private final double FAST_DRIVE_POWER = 0.8;
     private final double SLOW_DRIVE_POWER = 0.5;
@@ -113,6 +115,24 @@ public class BasicDrive extends LinearOpMode {
 
             armPower = ARM_POWER * gamepad2.left_stick_y;
             intakePower = INTAKE_POWER * gamepad2.right_stick_y;
+
+            if(robot.intake.isBusy())
+            {
+                intakePower = INTAKE_POWER;
+            }
+            else
+            {
+                if(gamepad2.left_bumper)
+                {
+                    double currentPos = robot.intake.getCurrentPosition();
+                    robot.intake.setTargetPosition((int) (Math.ceil(Math.abs(currentPos) / OurBot.INTAKE_COUNTS_PER_REV * 2) * Math.signum(currentPos) * OurBot.INTAKE_COUNTS_PER_REV / 2));
+                    robot.intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
+                else
+                {
+                    robot.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
+            }
 
             // Send calculated power to wheels
             robot.leftFront.setPower(leftPower);
