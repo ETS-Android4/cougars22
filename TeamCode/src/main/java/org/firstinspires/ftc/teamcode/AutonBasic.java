@@ -91,6 +91,6 @@ public class AutonBasic extends BaseAuton
     }
 
     protected void gyroTurn(double speed, double angle) {
-        super.gyroTurn(speed, angle, TURN_K_P, TURN_K_I, TURN_K_D);
+        super.gyroTurn(speed, angle, TURN_K_P, TURN_K_I, TURN_K_D, 1, 0);
     }
 }

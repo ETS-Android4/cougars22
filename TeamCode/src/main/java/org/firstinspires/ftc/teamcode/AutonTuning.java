@@ -10,9 +10,11 @@ public class AutonTuning extends BaseAuton
     {
         super.runOpMode();
 
-        double Kp = 0.01;
+        double Kp = 0;
         double Ki = 0;
         double Kd = 0;
+        double maxI = 1;
+        double a = 0;
         double delta = 0.01;
         int selectedItem = 0;
         boolean upHeld = false;
@@ -45,6 +47,12 @@ public class AutonTuning extends BaseAuton
                         Kd += delta;
                         break;
                     case 3:
+                        maxI += delta;
+                        break;
+                    case 4:
+                        a += delta;
+                        break;
+                    case 5:
                         delta *= 10;
                         break;
                 }
@@ -63,23 +71,29 @@ public class AutonTuning extends BaseAuton
                         Kd -= delta;
                         break;
                     case 3:
+                        maxI -= delta;
+                        break;
+                    case 4:
+                        a -= delta;
+                        break;
+                    case 5:
                         delta /= 10;
                         break;
                 }
             }
             else if (upPressed && !upHeld)
             {
-                selectedItem = (selectedItem + 4) % 5;
+                selectedItem = (selectedItem + 5) % 6;
             }
             else if (downPressed && !downHeld)
             {
-                selectedItem = (selectedItem + 1) % 5;
+                selectedItem = (selectedItem + 1) % 6;
             }
             else if (aPressed && !aHeld)
             {
-                gyroTurn(1, 90, Kp, Ki, Kd);
+                gyroTurn(1, 90, Kp, Ki, Kd, maxI, a);
                 sleep(1000);
-                gyroTurn(1, 0, Kp, Ki, Kd);
+                gyroTurn(1, 0, Kp, Ki, Kd, maxI, a);
             }
 
             upHeld = upPressed;
@@ -92,7 +106,7 @@ public class AutonTuning extends BaseAuton
             telemetry.addData("Ki", Ki);
             telemetry.addData("Kd", Kd);
             telemetry.addData("delta", delta);
-            telemetry.addData("Selected", selectedItem == 0 ? "Kp" : selectedItem == 1 ? "Ki" : selectedItem == 2 ? "Kd" : "delta");
+            telemetry.addData("Selected", selectedItem == 0 ? "Kp" : selectedItem == 1 ? "Ki" : selectedItem == 2 ? "Kd" : selectedItem == 3 ? "maxI" : selectedItem == 4 ? "a" : selectedItem == 5 ? "delta" : "N/A");
             telemetry.update();
         }
     }
