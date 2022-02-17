@@ -17,7 +17,7 @@ public abstract class BaseAuton extends LinearOpMode
     OurBot robot = new OurBot();
     BNO055IMU imu = null;
     private ElapsedTime runtime = new ElapsedTime();
-    static final double HEADING_THRESHOLD = 0.01; //How close to target angle we need to get when turning
+    static final double HEADING_THRESHOLD = 0.1; //How close to target angle we need to get when turning
 
     @Override
     public void runOpMode()
@@ -165,12 +165,13 @@ public abstract class BaseAuton extends LinearOpMode
      *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *              If a relative angle is required, add/subtract from current heading.
      */
-    protected void gyroTurn(double speed, double angle, double Kp, double Ki, double Kd)
+    protected void gyroTurn(double speed, double angle, double Kp, double Ki, double Kd, double maxI, double a)
     {
         double error;
         double lastError;
-        double time;
-        double lastTime;
+        double errorChange;
+        double filterEstimate = 0;
+        double lastFilterEstimate = 0;
         double derivative;
         double integral = 0;
         double steer;
@@ -178,21 +179,30 @@ public abstract class BaseAuton extends LinearOpMode
         double leftSpeed;
         double rightSpeed;
 
+        ElapsedTime timer = new ElapsedTime();
+
         error = getError(angle);
-        time = runtime.seconds();
         while (opModeIsActive() && !onTarget)
         {
             lastError = error;
             error = getError(angle);
-            lastTime = time;
-            time = runtime.seconds();
 
-            if (time != lastTime)
-                derivative = (error - lastError) / (runtime.seconds() - lastTime);
-            else
-                derivative = 0;
+            errorChange = error - lastError;
 
-            integral += error * (runtime.seconds() - lastTime);
+            filterEstimate = (a * lastFilterEstimate) + (1 - a) * errorChange;
+            lastFilterEstimate = filterEstimate;
+
+            derivative = filterEstimate / timer.seconds();
+
+            integral += error * timer.seconds();
+            if (integral > maxI / Ki)
+            {
+                integral = maxI / Ki;
+            }
+            else if (integral < -maxI / Ki)
+            {
+                integral = -maxI / Ki;
+            }
 
             if (Math.abs(error) <= HEADING_THRESHOLD)
             {
@@ -204,13 +214,13 @@ public abstract class BaseAuton extends LinearOpMode
             else
             {
                 steer = Range.clip(error * Kp + derivative * Kd + integral * Ki, -1, 1);
-                if (steer > 0 && steer < 0.15)
+                if (steer > 0 && steer < 0.10)
                 {
-                    steer = 0.15;
+                    steer = 0.10;
                 }
-                else if (steer < 0 && steer > -0.15)
+                else if (steer < 0 && steer > -0.10)
                 {
-                    steer = -0.15;
+                    steer = -0.10;
                 }
                 leftSpeed = speed * steer;
                 rightSpeed = -leftSpeed;
@@ -221,6 +231,8 @@ public abstract class BaseAuton extends LinearOpMode
             robot.leftBack.setPower(leftSpeed);
             robot.rightFront.setPower(rightSpeed);
             robot.rightBack.setPower(rightSpeed);
+
+            timer.reset();
 
             // Display it for the driver.
             telemetry.addData("Target", "%5.2f", angle);
