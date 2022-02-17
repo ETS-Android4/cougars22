@@ -120,10 +120,10 @@ public abstract class BaseAuton extends LinearOpMode
                     (runtime.seconds() < timeoutS) &&
                     ((robot.leftFront.isBusy() || robot.leftBack.isBusy()) || (robot.rightFront.isBusy() || robot.rightBack.isBusy())))
             {
-                double leftFrontScale = Math.max(1 - ((double)robot.leftFront.getCurrentPosition() - leftFrontStart) / (leftFrontTarget - leftFrontStart), 0.25);
-                double leftBackScale = Math.max(1 - ((double)robot.leftBack.getCurrentPosition() - leftBackStart) / (leftBackTarget - leftBackStart), 0.25);
-                double rightFrontScale = Math.max(1 - ((double)robot.rightFront.getCurrentPosition() - rightFrontStart) / (rightFrontTarget - rightFrontStart), 0.25);
-                double rightBackScale = Math.max(1 - ((double)robot.rightBack.getCurrentPosition() - rightBackStart) / (rightBackTarget - rightBackStart), 0.25);
+                double leftFrontScale = Math.max(1 - ((double)robot.leftFront.getCurrentPosition() - leftFrontStart) / (leftFrontTarget - leftFrontStart), 0.1);
+                double leftBackScale = Math.max(1 - ((double)robot.leftBack.getCurrentPosition() - leftBackStart) / (leftBackTarget - leftBackStart), 0.1);
+                double rightFrontScale = Math.max(1 - ((double)robot.rightFront.getCurrentPosition() - rightFrontStart) / (rightFrontTarget - rightFrontStart), 0.1);
+                double rightBackScale = Math.max(1 - ((double)robot.rightBack.getCurrentPosition() - rightBackStart) / (rightBackTarget - rightBackStart), 0.1);
                 robot.leftFront.setPower(speed * leftFrontScale);
                 robot.leftBack.setPower(speed * leftBackScale);
                 robot.rightFront.setPower(speed * rightFrontScale);
