@@ -127,10 +127,10 @@ public class OurBot
         rightFront.setMode(RunMode.RUN_USING_ENCODER);
         rightBack.setMode(RunMode.RUN_USING_ENCODER);
         arm.setMode(RunMode.RUN_USING_ENCODER);
-        intake.setMode(RunMode.RUN_USING_ENCODER);
 
         //Intake and Duck Spinner don't have encoders
         duckSpinner.setMode(RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(RunMode.RUN_WITHOUT_ENCODER);
     }
  }
 
