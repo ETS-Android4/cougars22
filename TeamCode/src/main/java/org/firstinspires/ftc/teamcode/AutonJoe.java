@@ -153,7 +153,7 @@ public class AutonJoe extends LinearOpMode
         encoderDrive(0.2, -11, 11, 10);
         encoderDrive(0.3, -16,  -16, 5);
         encoderDrive(0.2, 11, -11, 10);
-        encoderDrive(0.3, -27, -27, 10);
+        encoderDrive(0.3, 27, 27, 10);
 
 
 //cool
