@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
@@ -61,15 +62,18 @@ public class OurBot
     public static final double INTAKE_COUNTS_PER_REV = 288;
 
     /* Public OpMode members. */
-    public DcMotor  leftFront   = null;
-    public DcMotor  leftBack    = null;
-    public DcMotor  rightFront  = null;
-    public DcMotor  rightBack   = null;
-    public DcMotor  arm         = null;
-    public DcMotor  intake      = null;
-    public DcMotor  duckSpinner = null;
+    public DcMotor  leftFront           = null;
+    public DcMotor  leftBack            = null;
+    public DcMotor  rightFront          = null;
+    public DcMotor  rightBack           = null;
+    public DcMotor  arm                 = null;
+    public DcMotor  intake              = null;
+    public DcMotor  duckSpinner         = null;
 
-    public Servo    armHold     = null;
+    public Servo    armHold             = null;
+    public CRServo  tapeMeasureRotate   = null;
+    public CRServo  tapeMeasureUpDown   = null;
+    public CRServo  tapeMeasureExtend   = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           = null;
@@ -85,14 +89,17 @@ public class OurBot
         hwMap = ahwMap;
 
         // Define Motors
-        leftFront   = hwMap.get(DcMotor.class, "leftFront");
-        leftBack    = hwMap.get(DcMotor.class, "leftBack");
-        rightFront  = hwMap.get(DcMotor.class, "rightFront");
-        rightBack   = hwMap.get(DcMotor.class, "rightBack");
-        arm         = hwMap.get(DcMotor.class, "arm");
-        intake      = hwMap.get(DcMotor.class, "intake");
-        duckSpinner = hwMap.get(DcMotor.class, "duckSpinner");
-        armHold     = hwMap.get(Servo.class, "armHold");
+        leftFront           = hwMap.get(DcMotor.class, "leftFront");
+        leftBack            = hwMap.get(DcMotor.class, "leftBack");
+        rightFront          = hwMap.get(DcMotor.class, "rightFront");
+        rightBack           = hwMap.get(DcMotor.class, "rightBack");
+        arm                 = hwMap.get(DcMotor.class, "arm");
+        intake              = hwMap.get(DcMotor.class, "intake");
+        duckSpinner         = hwMap.get(DcMotor.class, "duckSpinner");
+        armHold             = hwMap.get(Servo.class, "armHold");
+        tapeMeasureRotate   = hwMap.get(CRServo.class, "tapeMeasureRotate");
+        tapeMeasureUpDown   = hwMap.get(CRServo.class, "tapeMeasureUpDown");
+        tapeMeasureExtend   = hwMap.get(CRServo.class, "tapeMeasureExtend");
 
         //Initialize Motor Direction
         leftFront.setDirection(Direction.REVERSE);

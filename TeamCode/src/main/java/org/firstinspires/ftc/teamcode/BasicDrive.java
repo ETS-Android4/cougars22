@@ -56,10 +56,8 @@ public class BasicDrive extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private OurBot robot = new OurBot();
-    private boolean tankDrive = false;
     private double basePower = 0.8;
-    private boolean autoIntaking = false;
-    private double autoIntakeTargetPosition = 0;
+    private boolean tapeMeasureMode = false;
 
     private final double FAST_DRIVE_POWER = 0.8;
     private final double SLOW_DRIVE_POWER = 0.5;
@@ -84,48 +82,7 @@ public class BasicDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-            // Setup a variable for each drive wheel
-            double leftPower;
-            double rightPower;
-            double armPower;
-            double intakePower;
-
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            if (tankDrive)
-            {
-                leftPower =  gamepad1.left_stick_y;
-                rightPower = gamepad1.right_stick_y;
-            }
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            else
-            {
-                double drive = gamepad1.left_stick_y;
-                double turn = -gamepad1.right_stick_x;
-                leftPower = Range.clip(drive + turn, -1.0, 1.0);
-                rightPower = Range.clip(drive - turn, -1.0, 1.0);
-            }
-
-            leftPower *= basePower;
-            rightPower *= basePower;
-
-            armPower = ARM_POWER * gamepad2.left_stick_y;
-            intakePower = INTAKE_POWER * gamepad2.right_stick_y;
-
-            // Send calculated power to wheels
-            robot.leftFront.setPower(leftPower);
-            robot.leftBack.setPower(leftPower);
-            robot.rightFront.setPower(rightPower);
-            robot.rightBack.setPower(rightPower);
-            robot.arm.setPower(armPower);
-            robot.intake.setPower(intakePower);
-            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
-
-            // Adjust Power
+            // Adjust power
             if (gamepad1.dpad_left)
             {
                 basePower = SLOW_DRIVE_POWER;
@@ -135,10 +92,46 @@ public class BasicDrive extends LinearOpMode {
                 basePower = FAST_DRIVE_POWER;
             }
 
+            if (gamepad1.triangle)
+            {
+                tapeMeasureMode = true;
+            }
+            else if (gamepad1.square)
+            {
+                tapeMeasureMode = false;
+            }
+
+            if (tapeMeasureMode)
+            {
+                robot.tapeMeasureUpDown.setPower(gamepad1.left_stick_y);
+                robot.tapeMeasureRotate.setPower(gamepad1.right_stick_x);
+                robot.tapeMeasureExtend.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+            }
+            else
+            {
+                // Drive
+                double drive = gamepad1.left_stick_y;
+                double turn = -gamepad1.right_stick_x;
+                double leftPower = Range.clip(drive + turn, -1.0, 1.0);
+                double rightPower = Range.clip(drive - turn, -1.0, 1.0);
+                leftPower *= basePower;
+                rightPower *= basePower;
+
+                robot.leftFront.setPower(leftPower);
+                robot.leftBack.setPower(leftPower);
+                robot.rightFront.setPower(rightPower);
+                robot.rightBack.setPower(rightPower);
+            }
+
+            // Controller 2 controls
+            robot.arm.setPower(ARM_POWER * gamepad2.left_stick_y);
+            robot.intake.setPower(INTAKE_POWER * gamepad2.right_stick_y);
+            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.addData("Power", basePower);
+            telemetry.addData("Mode", tapeMeasureMode ? "Tape Measure" : "Drive");
             telemetry.update();
 
             // Sleep to make the loop have more consistent timing
