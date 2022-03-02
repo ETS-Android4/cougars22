@@ -124,7 +124,9 @@ public class BasicDrive extends LinearOpMode {
             }
 
             // Controller 2 controls
-            robot.arm.setPower(ARM_POWER * gamepad2.left_stick_y);
+            double armPower = ARM_POWER * gamepad2.left_stick_y;
+            robot.arm1.setPower(armPower);
+            robot.arm2.setPower(armPower);
             robot.intake.setPower(INTAKE_POWER * gamepad2.right_stick_y);
             robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
 

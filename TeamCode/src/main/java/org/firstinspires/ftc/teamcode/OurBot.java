@@ -66,7 +66,8 @@ public class OurBot
     public DcMotor  leftBack            = null;
     public DcMotor  rightFront          = null;
     public DcMotor  rightBack           = null;
-    public DcMotor  arm                 = null;
+    public DcMotor  arm1                = null;
+    public DcMotor  arm2                = null;
     public DcMotor  intake              = null;
     public DcMotor  duckSpinner         = null;
 
@@ -93,7 +94,8 @@ public class OurBot
         leftBack            = hwMap.get(DcMotor.class, "leftBack");
         rightFront          = hwMap.get(DcMotor.class, "rightFront");
         rightBack           = hwMap.get(DcMotor.class, "rightBack");
-        arm                 = hwMap.get(DcMotor.class, "arm");
+        arm1                = hwMap.get(DcMotor.class, "arm1");
+        arm2                = hwMap.get(DcMotor.class, "arm2");
         intake              = hwMap.get(DcMotor.class, "intake");
         duckSpinner         = hwMap.get(DcMotor.class, "duckSpinner");
         armHold             = hwMap.get(Servo.class, "armHold");
@@ -106,7 +108,8 @@ public class OurBot
         leftBack.setDirection(Direction.REVERSE);
         rightFront.setDirection(Direction.FORWARD);
         rightBack.setDirection(Direction.FORWARD);
-        arm.setDirection(Direction.REVERSE);
+        arm1.setDirection(Direction.REVERSE);
+        arm2.setDirection(Direction.FORWARD);
         intake.setDirection(Direction.REVERSE);
         duckSpinner.setDirection(Direction.FORWARD);
 
@@ -115,7 +118,8 @@ public class OurBot
         leftBack.setPower(0);
         rightFront.setPower(0);
         rightBack.setPower(0);
-        arm.setPower(0);
+        arm1.setPower(0);
+        arm2.setPower(0);
         intake.setPower(0);
         duckSpinner.setPower(0);
 
@@ -124,7 +128,8 @@ public class OurBot
         leftBack.setMode(RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        arm1.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        arm2.setMode(RunMode.STOP_AND_RESET_ENCODER);
         //intake.setMode(RunMode.STOP_AND_RESET_ENCODER);
         //duckSpinner.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
@@ -133,7 +138,8 @@ public class OurBot
         leftBack.setMode(RunMode.RUN_USING_ENCODER);
         rightFront.setMode(RunMode.RUN_USING_ENCODER);
         rightBack.setMode(RunMode.RUN_USING_ENCODER);
-        arm.setMode(RunMode.RUN_USING_ENCODER);
+        arm1.setMode(RunMode.RUN_USING_ENCODER);
+        arm2.setMode(RunMode.RUN_USING_ENCODER);
 
         //Intake and Duck Spinner don't have encoders
         duckSpinner.setMode(RunMode.RUN_WITHOUT_ENCODER);
