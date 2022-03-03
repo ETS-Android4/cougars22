@@ -108,7 +108,6 @@ public class AutonBoxBlue extends BaseAuton {
 
 
         //poopoo
-        //chris was here
         // plus minus 13 or 11 idk brah
         // encoderDrive(0.4, -6, -6, 10);
         //encoderDrive(0.4,1,1,8);
