@@ -98,11 +98,17 @@ public class AutonBoxBlue extends BaseAuton {
         });
 
         // Wait for the game to start (driver presses PLAY)
-        while (!isStarted()) {
+        do {
             ShippingElementPosition newShippingElementPosition = pipeline.getShippingElementPosition();
             if (newShippingElementPosition != ShippingElementPosition.NOT_DETECTED) {
                 shippingElementPosition = newShippingElementPosition;
             }
+            sleep(50);
+        } while (!isStarted());
+
+        while(shippingElementPosition == ShippingElementPosition.NOT_DETECTED)
+        {
+            shippingElementPosition = pipeline.getShippingElementPosition();
             sleep(50);
         }
 
