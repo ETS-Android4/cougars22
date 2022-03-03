@@ -82,6 +82,7 @@ public class AutonBoxRed extends BaseAuton {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         pipeline = new ShippingElementDetectorPipeline();
+
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -98,14 +99,19 @@ public class AutonBoxRed extends BaseAuton {
         });
 
         // Wait for the game to start (driver presses PLAY)
-        while (!isStarted()) {
+        do {
             ShippingElementPosition newShippingElementPosition = pipeline.getShippingElementPosition();
             if (newShippingElementPosition != ShippingElementPosition.NOT_DETECTED) {
                 shippingElementPosition = newShippingElementPosition;
             }
             sleep(50);
-        }
+        } while (!isStarted());
 
+        while(shippingElementPosition == ShippingElementPosition.NOT_DETECTED)
+        {
+            shippingElementPosition = pipeline.getShippingElementPosition();
+            sleep(50);
+        }
 
         //poopoo
         // plus minus 13 or 11 idk brah
@@ -136,11 +142,11 @@ public class AutonBoxRed extends BaseAuton {
                 robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm1.setPower(0.2);
                 robot.arm2.setPower(0.2);
-                encoderDrive(0.2,6,6,2);
+                encoderDrive(0.2, 6, 6, 2);
                 robot.intake.setPower(-0.55);
                 sleep(1000);
                 robot.intake.setPower(0);
-                encoderDrive(0.2,-8,-8,3);
+                encoderDrive(0.2, -8, -8, 3);
                 robot.arm1.setPower(0);
                 robot.arm2.setPower(0);
                 break;
@@ -153,18 +159,18 @@ public class AutonBoxRed extends BaseAuton {
                 robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm1.setPower(0.2);
                 robot.arm2.setPower(0.2);
-                encoderDrive(0.2,6,6,2);
+                encoderDrive(0.2, 6, 6, 2);
                 robot.intake.setPower(-0.8);
                 sleep(1000);
                 robot.intake.setPower(0);
-                encoderDrive(0.2,-8,-8,3);
+                encoderDrive(0.2, -8, -8, 3);
                 robot.arm1.setPower(0);
                 robot.arm2.setPower(0);
                 break;
         }
 
         //This code is outside the switch statement again because once again it is done no matter what
-        encoderDrive(0.2,-5, -5, 5);
+        encoderDrive(0.2, -5, -5, 5);
 
         //CAROUSEL CODE GOES HERE
 
