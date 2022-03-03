@@ -188,7 +188,7 @@ public class ShippingElementDetector extends LinearOpMode
             int kernelSize = 6 * blurRadius + 1;
             Imgproc.GaussianBlur(input, blurredMat, new Size(kernelSize, kernelSize), blurRadius);
 
-            Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV_FULL);
+            Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
             Core.extractChannel(hsvMat, hueMat, 0);
             Core.extractChannel(hsvMat, saturationMat, 1);
             Core.extractChannel(hsvMat, valueMat, 2);
