@@ -104,7 +104,7 @@ public class BasicDrive extends LinearOpMode {
             if (tapeMeasureMode)
             {
                 robot.tapeMeasureUpDown.setPower(gamepad1.left_stick_y);
-                robot.tapeMeasureRotate.setPower(gamepad1.right_stick_x);
+                robot.tapeMeasureRotate.setPower(-gamepad1.right_stick_x);
                 robot.tapeMeasureExtend.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
             }
             else

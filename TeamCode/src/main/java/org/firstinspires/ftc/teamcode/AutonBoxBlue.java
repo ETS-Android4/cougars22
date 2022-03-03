@@ -124,13 +124,13 @@ public class AutonBoxBlue extends BaseAuton {
 
         //This code is outside the switch statement because it happens no matter what
         encoderDrive(0.4, 0, 6, 3);
-        encoderDrive(0.2, 17, 17, 4);
+        encoderDrive(0.2, 18, 18, 4);
 
         switch (shippingElementPosition) {
             case LEFT:
                 //Bottom Level
-                robot.intake.setPower(-0.8);
-                sleep(1000);
+                robot.intake.setPower(-0.3);
+                sleep(1500);
                 robot.intake.setPower(0);
                 break;
 
@@ -170,7 +170,19 @@ public class AutonBoxBlue extends BaseAuton {
         }
 
         //This code is outside the switch statement again because once again it is done no matter what
-        encoderDrive(0.2,-5, -5, 5);
+        encoderDrive(0.2,-20, -20, 5);
+        encoderDrive(0.3,-5,-5,1);
+        encoderDrive(0.5,5,5,5);
+        encoderDrive(0.4,-1,13,8);
+        encoderDrive(0.4, -56,-56, 8);
+        encoderDrive(0.3, -4,-8,3);
+        robot.duckSpinner.setPower(-0.4);
+        sleep(1000);
+        robot.duckSpinner.setPower(0);
+        encoderDrive(0.4,4.5,0,4);
+        encoderDrive(0.4, 19,19,5);
+        encoderDrive(0.4,-13,13,5);
+        encoderDrive(0.4,-14,-14,4);
 
         //CAROUSEL CODE GOES HERE
 
