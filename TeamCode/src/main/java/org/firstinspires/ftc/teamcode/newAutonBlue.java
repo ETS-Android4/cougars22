@@ -73,6 +73,7 @@ public class newAutonBlue extends BaseAuton
 
 
          int wee;
+         
         switch (wee);
         {
             case 1:
