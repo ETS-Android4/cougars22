@@ -32,7 +32,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-/**i
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.ShippingElementDetectorPipeline.ShippingElementPosition;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
+
+/**
+ * i
  * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
  * The code is structured as a LinearOpMode
@@ -59,45 +67,69 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "NewautonBlue")
+@Autonomous(name = "Box - Red")
 //@Disabled
-public class newAutonBlue extends BaseAuton
-{
+public class AutonBoxRed extends BaseAuton {
+    OpenCvWebcam webcam;
+    ShippingElementDetectorPipeline pipeline;
+    ShippingElementPosition shippingElementPosition = ShippingElementPosition.NOT_DETECTED;
+
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         super.runOpMode();
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
+        pipeline = new ShippingElementDetectorPipeline();
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webcam.setPipeline(pipeline);
+                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
+
         // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+        while (!isStarted()) {
+            ShippingElementPosition newShippingElementPosition = pipeline.getShippingElementPosition();
+            if (newShippingElementPosition != ShippingElementPosition.NOT_DETECTED) {
+                shippingElementPosition = newShippingElementPosition;
+            }
+            sleep(50);
+        }
 
 
+        //poopoo
+        // plus minus 13 or 11 idk brah
+        // encoderDrive(0.4, -6, -6, 10);
+        //encoderDrive(0.4,1,1,8);
+        //encoderDrive(0.4, -11, 11, 10);
+        //encoderDrive(0.4, 25, 25, 8);
+        //encoderDrive(0.2, -0, -5.5, 10);
+        //encoderDrive(0.3,5,5,5);
 
-/*
-        encoderDrive(0.4, 0, 6, 3);
+        //This code is outside the switch statement because it happens no matter what
+        encoderDrive(0.4, 6, 0, 3);
         encoderDrive(0.2, 17, 17, 4);
-        //THIS MAKES ROBOT GO BRRRRR
-        //DO NOT DELETE PRIMARY STEPS PLS
- */
 
-        int wee;
-
-        switch (wee)
-        {
-            case 1:
-//the lowest option
-                encoderDrive(0.4, 0, 6, 3);
-                encoderDrive(0.2, 17, 17, 4);
+        switch (shippingElementPosition) {
+            case LEFT:
+                //Bottom Level
                 robot.intake.setPower(-0.8);
                 sleep(1000);
                 robot.intake.setPower(0);
-                encoderDrive(0.2,-5, -5, 5);
                 break;
-//The middle option
-            case 2:
-                //MIDDLE REEE WEEE
-                encoderDrive(0.4, 0, 6, 3);
-                encoderDrive(0.2, 17, 17, 4);
+
+            case MIDDLE:
+                //Middle Level
                 robot.arm1.setTargetPosition(-63);
                 robot.arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm2.setTargetPosition(-63);
@@ -111,13 +143,10 @@ public class newAutonBlue extends BaseAuton
                 encoderDrive(0.2,-8,-8,3);
                 robot.arm1.setPower(0);
                 robot.arm2.setPower(0);
-                encoderDrive(0.2,-5, -5, 5);
                 break;
-//the highest option
-            case 3:
-                //HIGH REE
-                encoderDrive(0.4, 0, 6, 3);
-                encoderDrive(0.2, 17, 17, 4);
+
+            case RIGHT:
+                //Top Level
                 robot.arm1.setTargetPosition(-195);
                 robot.arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm2.setTargetPosition(-195);
@@ -131,53 +160,13 @@ public class newAutonBlue extends BaseAuton
                 encoderDrive(0.2,-8,-8,3);
                 robot.arm1.setPower(0);
                 robot.arm2.setPower(0);
-                encoderDrive(0.2,-5, -5, 5);
                 break;
-         }
+        }
 
+        //This code is outside the switch statement again because once again it is done no matter what
+        encoderDrive(0.2,-5, -5, 5);
 
-            encoderDrive(0.1, -20, -20, 3);
-            encoderDrive(0.2, -13,13,4);
-            encoderDrive(0.2, -29, -29, 10);
-            encoderDrive(0.1,-3, -3, 5);
-            encoderDrive(0.2, 0, -4, 5);
-            encoderDrive(0.2, 5,5,3);
-            encoderDrive(0.3, 4.5, -4.5,8);
-            encoderDrive(0.3,10,10,4);
-            encoderDrive(0.3, 4.5,-4.5,10);
-            encoderDrive(0.3, 8,8,3);
-
-
-
-
-
-
-         //CAROSEL OR HOWEVER YOU SPELL THE SPINNY THING CODE GOES HERE
-
-
-
-
-
-
-
-        //poopoo
-        //chris was here
-        // plus minus 13 or 11 idk
-       // encoderDrive(0.4, -6, -6, 10);
-        //encoderDrive(0.4,1,1,8);
-        //encoderDrive(0.4, -11, 11, 10);
-        //encoderDrive(0.4, 25, 25, 8);
-        //encoderDrive(0.2, -0, -5.5, 10);
-        //encoderDrive(0.3,5,5,5);
-
-
-
-
-
-        //dev wuz here
-        //hello world I am alive nowff
-
-
+        //CAROUSEL CODE GOES HERE
 
 
         telemetry.addData("Path", "Complete");
