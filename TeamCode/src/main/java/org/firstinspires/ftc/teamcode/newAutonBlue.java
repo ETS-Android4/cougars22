@@ -136,6 +136,22 @@ public class newAutonBlue extends BaseAuton
          }
 
 
+            encoderDrive(0.1, -20, -20, 3);
+            encoderDrive(0.2, -13,13,4);
+            encoderDrive(0.2, -29, -29, 10);
+            encoderDrive(0.1,-3, -3, 5);
+            encoderDrive(0.2, 0, -4, 5);
+            encoderDrive(0.2, 5,5,3);
+            encoderDrive(0.3, 4.5, -4.5,8);
+            encoderDrive(0.3,10,10,4);
+            encoderDrive(0.3, 4.5,-4.5,10);
+            encoderDrive(0.3, 8,8,3);
+
+
+
+
+
+
          //CAROSEL OR HOWEVER YOU SPELL THE SPINNY THING CODE GOES HERE
 
 
@@ -159,6 +175,7 @@ public class newAutonBlue extends BaseAuton
 
 
         //dev wuz here
+        //hello world I am alive nowff
 
 
 
