@@ -123,8 +123,6 @@ public class AutonBoxBlue extends BaseAuton {
         switch (shippingElementPosition) {
             case LEFT:
                 //Bottom Level
-                encoderDrive(0.4, 0, 6, 3);
-                encoderDrive(0.2, 17, 17, 4);
                 robot.intake.setPower(-0.8);
                 sleep(1000);
                 robot.intake.setPower(0);
@@ -132,17 +130,17 @@ public class AutonBoxBlue extends BaseAuton {
 
             case MIDDLE:
                 //Middle Level
-                robot.arm1.setTargetPosition(-65);
+                robot.arm1.setTargetPosition(-63);
                 robot.arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm2.setTargetPosition(-65);
+                robot.arm2.setTargetPosition(-63);
                 robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm1.setPower(0.2);
                 robot.arm2.setPower(0.2);
-                encoderDrive(0.2, 6, 6, 2);
-                robot.intake.setPower(-0.6);
+                encoderDrive(0.2,6,6,2);
+                robot.intake.setPower(-0.55);
                 sleep(1000);
                 robot.intake.setPower(0);
-                encoderDrive(0.2, -8, -8, 3);
+                encoderDrive(0.2,-8,-8,3);
                 robot.arm1.setPower(0);
                 robot.arm2.setPower(0);
                 break;
@@ -167,6 +165,8 @@ public class AutonBoxBlue extends BaseAuton {
 
         //This code is outside the switch statement again because once again it is done no matter what
         encoderDrive(0.2,-5, -5, 5);
+
+        //CAROUSEL CODE GOES HERE
 
 
         telemetry.addData("Path", "Complete");
