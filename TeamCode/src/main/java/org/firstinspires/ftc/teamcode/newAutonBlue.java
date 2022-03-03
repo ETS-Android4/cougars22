@@ -30,11 +30,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
+/**i
  * This file illustrates the concept of driving a path based on encoder counts.
  * It uses the common Pushbot hardware class to define the drive on the robot.
  * The code is structured as a LinearOpMode
@@ -61,9 +59,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name = "Duck - Blue")
+@Autonomous(name = "NewAutonBlue")
 //@Disabled
-public class JoeBlueFixed extends BaseAuton
+public class newAutonBlue extends BaseAuton
 {
     @Override
     public void runOpMode()
@@ -74,8 +72,25 @@ public class JoeBlueFixed extends BaseAuton
         waitForStart();
 
 
+         int wee;
+        switch (wee);
+        {
+            case 1:
+          //code
+          break;
+
+            case 2:
+          //code
+          break;
+
+            case 3:
+          //code
+           break;
+         }
+
 
         //poopoo
+        //chris was here
         // plus minus 13 or 11 idk brah
        // encoderDrive(0.4, -6, -6, 10);
         //encoderDrive(0.4,1,1,8);
@@ -83,18 +98,70 @@ public class JoeBlueFixed extends BaseAuton
         //encoderDrive(0.4, 25, 25, 8);
         //encoderDrive(0.2, -0, -5.5, 10);
         //encoderDrive(0.3,5,5,5);
-        encoderDrive(0.1, 0, -4, 1.5);
-        robot.duckSpinner.setPower(-0.5);
-        sleep(3000);
-        robot.duckSpinner.setPower(0);
-        encoderDrive(0.2, 6,6,10);
-        encoderDrive(0.2, 6, -6, 10);
-        //encoderDrive(0.2, -10,10,8);
-       encoderDrive(0.2, 21, 21, 10);
-        encoderDrive(0.3,11,-11,5);
-        encoderDrive(0.2, 11, 11, 2);
-       // encoderDrive(0.3, -19, -19, 10);
-//cool
+
+        encoderDrive(0.4, 0, 6, 3);
+        encoderDrive(0.2, 17, 17, 4);
+
+
+        robot.arm1.setTargetPosition(-65);
+        robot.arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm2.setTargetPosition(-65);
+        robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm1.setPower(0.2);
+        robot.arm2.setPower(0.2);
+        encoderDrive(0.2,6,6,2);
+        robot.intake.setPower(-0.6);
+        sleep(1000);
+        robot.intake.setPower(0);
+        encoderDrive(0.2,-8,-8,3);
+        robot.arm1.setPower(0);
+        robot.arm2.setPower(0);
+        encoderDrive(0.2,-5, -5, 5);
+
+
+
+
+
+
+
+
+
+
+
+        //HIGH REE
+
+        /*
+        robot.arm1.setTargetPosition(-195);
+        robot.arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm2.setTargetPosition(-195);
+        robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm1.setPower(0.2);
+        robot.arm2.setPower(0.2);
+        encoderDrive(0.2,6,6,2);
+        robot.intake.setPower(-0.8);
+        sleep(1000);
+        robot.intake.setPower(0);
+        encoderDrive(0.2,-8,-8,3);
+        robot.arm1.setPower(0);
+        robot.arm2.setPower(0);
+        encoderDrive(0.2,-5, -5, 5);
+        */
+
+
+        //LOW REE
+/*
+        encoderDrive(0.4, 0, 6, 3);
+        encoderDrive(0.2, 17, 17, 4);
+        robot.intake.setPower(-0.8);
+        sleep(1000);
+        robot.intake.setPower(0);
+        encoderDrive(0.2,-5, -5, 5);
+*/
+
+
+
+
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
