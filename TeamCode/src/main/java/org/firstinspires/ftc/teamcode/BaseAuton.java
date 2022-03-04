@@ -14,9 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 public abstract class BaseAuton extends LinearOpMode
 {
     /* Declare OpMode members. */
-    OurBot robot = new OurBot();
+    final OurBot robot = new OurBot();
     BNO055IMU imu = null;
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
     static final double HEADING_THRESHOLD = 0.1; //How close to target angle we need to get when turning
 
     @Override
@@ -160,12 +160,11 @@ public abstract class BaseAuton extends LinearOpMode
      * 1) Move gets to the heading (angle)
      * 2) Driver stops the opmode running.
      *
-     * @param speed Desired speed of turn.
      * @param angle Absolute Angle (in Degrees) relative to last gyro reset.
      *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *              If a relative angle is required, add/subtract from current heading.
      */
-    protected void gyroTurn(double speed, double angle, double Kp, double Ki, double Kd, double maxI, double a)
+    protected void gyroTurn(double angle, double Kp, double Ki, double Kd, double maxI, double a)
     {
         double error;
         double lastError;
@@ -222,7 +221,7 @@ public abstract class BaseAuton extends LinearOpMode
                 {
                     steer = -0.10;
                 }
-                leftSpeed = speed * steer;
+                leftSpeed = steer;
                 rightSpeed = -leftSpeed;
             }
 

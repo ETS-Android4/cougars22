@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -54,16 +51,17 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 
+@SuppressWarnings("FieldCanBeLocal")
 @TeleOp(name="Training Wheels")
 //@Disabled
 public class TrainingWheels extends LinearOpMode {
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private LameDriveBot robot = new LameDriveBot();
+    private final ElapsedTime runtime = new ElapsedTime();
+    private final LameDriveBot robot = new LameDriveBot();
     private double basePower;
 
-    private double DRIVE_POWER = 0.15;
+    private final double DRIVE_POWER = 0.15;
 
     @Override
     public void runOpMode() {

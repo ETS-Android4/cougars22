@@ -91,9 +91,9 @@ public class AutonTuning extends BaseAuton
             }
             else if (aPressed && !aHeld)
             {
-                gyroTurn(1, 90, Kp, Ki, Kd, maxI, a);
+                gyroTurn(90, Kp, Ki, Kd, maxI, a);
                 sleep(1000);
-                gyroTurn(1, 0, Kp, Ki, Kd, maxI, a);
+                gyroTurn(0, Kp, Ki, Kd, maxI, a);
             }
 
             upHeld = upPressed;

@@ -33,7 +33,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -54,12 +53,6 @@ public class PipelineStageSwitchingExample extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera1Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -86,7 +79,7 @@ public class PipelineStageSwitchingExample extends LinearOpMode
         waitForStart();
 
         boolean xPressed = false;
-        boolean xHeld = false;
+        boolean xHeld;
 
         while (opModeIsActive())
         {
@@ -111,10 +104,10 @@ public class PipelineStageSwitchingExample extends LinearOpMode
      */
     static class StageSwitchingPipeline extends OpenCvPipeline
     {
-        Mat yCbCrChan2Mat = new Mat();
-        Mat thresholdMat = new Mat();
-        Mat contoursOnFrameMat = new Mat();
-        List<MatOfPoint> contoursList = new ArrayList<>();
+        final Mat yCbCrChan2Mat = new Mat();
+        final Mat thresholdMat = new Mat();
+        final Mat contoursOnFrameMat = new Mat();
+        final List<MatOfPoint> contoursList = new ArrayList<>();
         int numContoursFound;
 
         enum Stage
@@ -126,7 +119,7 @@ public class PipelineStageSwitchingExample extends LinearOpMode
         }
 
         private Stage stageToRenderToViewport = Stage.YCbCr_CHAN2;
-        private Stage[] stages = Stage.values();
+        private final Stage[] stages = Stage.values();
 
         @Override
         public void onViewportTapped()
@@ -180,11 +173,6 @@ public class PipelineStageSwitchingExample extends LinearOpMode
                 case CONTOURS_OVERLAYED_ON_FRAME:
                 {
                     return contoursOnFrameMat;
-                }
-
-                case RAW_IMAGE:
-                {
-                    return input;
                 }
 
                 default:
