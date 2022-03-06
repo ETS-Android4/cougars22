@@ -123,28 +123,31 @@ public class AutonBoxRed extends BaseAuton {
         //encoderDrive(0.3,5,5,5);
 
         //This code is outside the switch statement because it happens no matter what
-        encoderDrive(0.4, 6, 0, 3);
-        encoderDrive(0.2, 17, 17, 4);
+        robot.armHold.setPosition(0);
+
+        encoderDrive(0.4, 11, 0, 3);
+
 
         switch (shippingElementPosition) {
             case LEFT:
                 //Bottom Level
-                robot.intake.setPower(-0.8);
-                sleep(1000);
+                encoderDrive(0.2, 29, 29, 3);
+                robot.intake.setPower(-0.4);
+                sleep(2100);
                 robot.intake.setPower(0);
                 break;
 
             case MIDDLE:
                 //Middle Level
-                robot.arm1.setTargetPosition(-63);
+                robot.arm1.setTargetPosition(-112);
                 robot.arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm2.setTargetPosition(-63);
+                robot.arm2.setTargetPosition(-112);
                 robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm1.setPower(0.2);
                 robot.arm2.setPower(0.2);
-                encoderDrive(0.2, 6, 6, 2);
+                encoderDrive(0.2, 27, 27, 3);
                 robot.intake.setPower(-0.55);
-                sleep(1000);
+                sleep(1150);
                 robot.intake.setPower(0);
                 encoderDrive(0.2, -8, -8, 3);
                 robot.arm1.setPower(0);
@@ -159,9 +162,9 @@ public class AutonBoxRed extends BaseAuton {
                 robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm1.setPower(0.2);
                 robot.arm2.setPower(0.2);
-                encoderDrive(0.2, 6, 6, 2);
-                robot.intake.setPower(-0.8);
-                sleep(1000);
+                encoderDrive(0.2, 37, 37, 3);
+                robot.intake.setPower(-0.99);
+                sleep(1150);
                 robot.intake.setPower(0);
                 encoderDrive(0.2, -8, -8, 3);
                 robot.arm1.setPower(0);
@@ -170,20 +173,47 @@ public class AutonBoxRed extends BaseAuton {
         }
 
         //This code is outside the switch statement again because once again it is done no matter what
-        encoderDrive(0.2,-20, -20, 5);
-        encoderDrive(0.3,-5,-5,1);
+       /* encoderDrive(0.3,0,6,4);
+        encoderDrive(0.3,-20, -20, 5);
+
         encoderDrive(0.5,5,5,5);
         encoderDrive(0.4,13,-1,8);
         encoderDrive(0.4, -56,-56, 8);
-        encoderDrive(0.3, -8,1,3);
+        encoderDrive(0.3, -8,1,1);
         robot.duckSpinner.setPower(-0.4);
-        sleep(1000);
+        sleep(-3000);
         robot.duckSpinner.setPower(0);
         encoderDrive(0.4,0,4.5,4);
         encoderDrive(0.4, 19,19,5);
         encoderDrive(0.4,13,-13,5);
         encoderDrive(0.4,-14,-14,4);
         //CAROUSEL CODE GOES HERE
+*/
+        //encoderDrive(0.4,0,10,4);
+        robot.arm1.setPower(0);
+        robot.arm2.setPower(0);
+        encoderDrive(0.2,0,-5,2);
+        encoderDrive(0.2,-28, -25, 5);
+        encoderDrive(0.2,-10,-10,2);
+        robot.duckSpinner.setPower(0.4);
+        sleep(3000);
+        robot.duckSpinner.setPower(0);
+        encoderDrive(0.3,-1,20,3);
+        encoderDrive(0.2,4,4,2);
+
+        /*
+        encoderDrive(0.3,10.5,-10.5,8);
+        encoderDrive(0.5, -28,-28, 8);
+        encoderDrive(0.5, -6,3,3);
+        encoderDrive(0.5,-10,-10,1.5);
+        robot.duckSpinner.setPower(0.4);
+        sleep(3000);
+        robot.duckSpinner.setPower(0);
+        encoderDrive(0.5,-1,10,4);
+        encoderDrive(0.5,0,20,2);
+        encoderDrive(0.5,10,10,2);
+*/
+
 
 
         telemetry.addData("Path", "Complete");

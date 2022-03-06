@@ -123,32 +123,33 @@ public class AutonBoxBlue extends BaseAuton {
         //encoderDrive(0.3,5,5,5);
 
         //This code is outside the switch statement because it happens no matter what
-        encoderDrive(0.4, 0, 6, 3);
-        encoderDrive(0.2, 18, 18, 4);
+        robot.armHold.setPosition(0);
+
+        encoderDrive(0.5, 0, 6, 3);
+
 
         switch (shippingElementPosition) {
             case LEFT:
                 //Bottom Level
-                robot.intake.setPower(-0.3);
-                sleep(1500);
+                encoderDrive(0.3, 17, 17, 4);
+                robot.intake.setPower(-0.4);
+                sleep(2100);
                 robot.intake.setPower(0);
                 break;
 
             case MIDDLE:
                 //Middle Level
-                robot.arm1.setTargetPosition(-63);
+                robot.arm1.setTargetPosition(-117);
                 robot.arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.arm2.setTargetPosition(-63);
+                robot.arm2.setTargetPosition(-117);
                 robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm1.setPower(0.2);
                 robot.arm2.setPower(0.2);
-                encoderDrive(0.2,6,6,2);
+                encoderDrive(0.3, 17.5, 17.5, 4);
+                sleep(250);
                 robot.intake.setPower(-0.55);
-                sleep(1000);
+                sleep(1200);
                 robot.intake.setPower(0);
-                encoderDrive(0.2,-8,-8,3);
-                robot.arm1.setPower(0);
-                robot.arm2.setPower(0);
                 break;
 
             case RIGHT:
@@ -159,30 +160,32 @@ public class AutonBoxBlue extends BaseAuton {
                 robot.arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.arm1.setPower(0.2);
                 robot.arm2.setPower(0.2);
-                encoderDrive(0.2,6,6,2);
+                encoderDrive(0.3, 23, 23, 4);
                 robot.intake.setPower(-0.8);
-                sleep(1000);
+                sleep(1200);
                 robot.intake.setPower(0);
-                encoderDrive(0.2,-8,-8,3);
-                robot.arm1.setPower(0);
-                robot.arm2.setPower(0);
+                encoderDrive(0.5,-8,-8,3);
                 break;
         }
 
         //This code is outside the switch statement again because once again it is done no matter what
-        encoderDrive(0.2,-20, -20, 5);
-        encoderDrive(0.3,-5,-5,1);
-        encoderDrive(0.5,5,5,5);
-        encoderDrive(0.4,-1,13,8);
-        encoderDrive(0.4, -56,-56, 8);
-        encoderDrive(0.3, -4,-8,3);
+        encoderDrive(0.4,6,0,4);
+        robot.arm1.setPower(0);
+        robot.arm2.setPower(0);
+        encoderDrive(0.2,-14, -14, 5);
+
+
+        encoderDrive(0.3,-10.5,10.5,8);
+        encoderDrive(0.5, -32,-32, 8);
+        encoderDrive(0.5, 3,-6,3);
+        encoderDrive(0.5,-10,-10,1.5);
         robot.duckSpinner.setPower(-0.4);
-        sleep(1000);
+        sleep(3000);
         robot.duckSpinner.setPower(0);
-        encoderDrive(0.4,4.5,0,4);
-        encoderDrive(0.4, 19,19,5);
-        encoderDrive(0.4,-13,13,5);
-        encoderDrive(0.4,-14,-14,4);
+        encoderDrive(0.5,10,-1,4);
+        encoderDrive(0.5,20,0,2);
+        encoderDrive(0.5,10,10,2);
+
 
         //CAROUSEL CODE GOES HERE
 
