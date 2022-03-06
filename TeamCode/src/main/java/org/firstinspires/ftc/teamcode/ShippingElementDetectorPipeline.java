@@ -21,10 +21,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -34,11 +30,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,16 +43,16 @@ import java.util.List;
  */
 public class ShippingElementDetectorPipeline extends OpenCvPipeline
 {
-    Mat blurredMat = new Mat();
-    Mat hsvMat = new Mat();
-    Mat hueMat = new Mat();
-    Mat saturationMat = new Mat();
-    Mat valueMat = new Mat();
-    Mat maskMat = new Mat();
-    Mat thresholdMat = new Mat();
-    Mat contoursOnFrameMat = new Mat();
-    List<MatOfPoint> contoursList = new ArrayList<>();
-    List<MatOfPoint> filteredContoursList = new ArrayList<>();
+    final Mat blurredMat = new Mat();
+    final Mat hsvMat = new Mat();
+    final Mat hueMat = new Mat();
+    final Mat saturationMat = new Mat();
+    final Mat valueMat = new Mat();
+    final Mat maskMat = new Mat();
+    final Mat thresholdMat = new Mat();
+    final Mat contoursOnFrameMat = new Mat();
+    final List<MatOfPoint> contoursList = new ArrayList<>();
+    final List<MatOfPoint> filteredContoursList = new ArrayList<>();
     ShippingElementPosition shippingElementPosition = ShippingElementPosition.NOT_DETECTED;
     double frameWidthThreshold;
 
@@ -83,7 +75,7 @@ public class ShippingElementDetectorPipeline extends OpenCvPipeline
     }
 
     private Stage stageToRenderToViewport = Stage.CONTOURS_OVERLAYED_ON_FRAME;
-    private Stage[] stages = Stage.values();
+    private final Stage[] stages = Stage.values();
 
     @Override
     public void onViewportTapped()
@@ -129,8 +121,6 @@ public class ShippingElementDetectorPipeline extends OpenCvPipeline
         Core.extractChannel(hsvMat, saturationMat, 1);
         Core.extractChannel(hsvMat, valueMat, 2);
 
-        //Core.inRange(hsvMat, new Scalar(0, 75, 75), new Scalar(100, 255, 255), thresholdMat);
-        //Imgproc.threshold(cbMat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
         Core.inRange(hsvMat, new Scalar(120, 40, 55), new Scalar(150, 255, 255), maskMat);
         Core.bitwise_and(valueMat, maskMat, thresholdMat);
 
@@ -163,7 +153,7 @@ public class ShippingElementDetectorPipeline extends OpenCvPipeline
         {
             Rect boundingRect = Imgproc.boundingRect(largestContour);
             Imgproc.rectangle(contoursOnFrameMat, boundingRect, new Scalar(255, 0, 0), 2);
-            List<MatOfPoint> largestContourList = new ArrayList<MatOfPoint>();
+            List<MatOfPoint> largestContourList = new ArrayList<>();
             largestContourList.add(largestContour);
             Imgproc.drawContours(contoursOnFrameMat, largestContourList, 0, new Scalar(255, 0, 0), 3);
             Moments M = Imgproc.moments(largestContour);

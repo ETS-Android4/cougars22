@@ -34,7 +34,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
@@ -52,12 +51,6 @@ public class SkystoneDeterminationExample extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        /**
-         * NOTE: Many comments have been omitted from this sample for the
-         * sake of conciseness. If you're just starting out with EasyOpenCv,
-         * you should take a look at {@link InternalCamera1Example} or its
-         * webcam counterpart, {@link WebcamExample} first.
-         */
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -89,7 +82,7 @@ public class SkystoneDeterminationExample extends LinearOpMode
         waitForStart();
 
         boolean xPressed = false;
-        boolean xHeld = false;
+        boolean xHeld;
 
         while (opModeIsActive())
         {
@@ -151,22 +144,22 @@ public class SkystoneDeterminationExample extends LinearOpMode
          *   ------------------------------------
          *
          */
-        Point region1_pointA = new Point(
+        final Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
                 REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
+        final Point region1_pointB = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region2_pointA = new Point(
+        final Point region2_pointA = new Point(
                 REGION2_TOPLEFT_ANCHOR_POINT.x,
                 REGION2_TOPLEFT_ANCHOR_POINT.y);
-        Point region2_pointB = new Point(
+        final Point region2_pointB = new Point(
                 REGION2_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION2_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-        Point region3_pointA = new Point(
+        final Point region3_pointA = new Point(
                 REGION3_TOPLEFT_ANCHOR_POINT.x,
                 REGION3_TOPLEFT_ANCHOR_POINT.y);
-        Point region3_pointB = new Point(
+        final Point region3_pointB = new Point(
                 REGION3_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
                 REGION3_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
 
@@ -174,8 +167,8 @@ public class SkystoneDeterminationExample extends LinearOpMode
          * Working variables
          */
         Mat region1_Cb, region2_Cb, region3_Cb;
-        Mat YCrCb = new Mat();
-        Mat Cb = new Mat();
+        final Mat YCrCb = new Mat();
+        final Mat Cb = new Mat();
         int avg1, avg2, avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
@@ -343,8 +336,7 @@ public class SkystoneDeterminationExample extends LinearOpMode
                         GREEN, // The color the rectangle is drawn in
                         -1); // Negative thickness means solid fill
             }
-            else if(max == avg3) // Was it from region 3?
-            {
+            else {
                 position = SkystonePosition.RIGHT; // Record our analysis
 
                 /*
@@ -397,7 +389,7 @@ public class SkystoneDeterminationExample extends LinearOpMode
         }
 
         private Stage stageToRenderToViewport = Stage.YCbCr_CHAN2;
-        private Stage[] stages = Stage.values();
+        private final Stage[] stages = Stage.values();
 
         @Override
         public void onViewportTapped()

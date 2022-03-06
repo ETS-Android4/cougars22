@@ -50,7 +50,8 @@
   here as examples on how make your own.
 
 -->
-<Calibrations>
+<Calibrations xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedResources">
 
     <!-- ======================================================================================= -->
 
