@@ -101,11 +101,11 @@ public class BasicDrive extends LinearOpMode {
                 tapeMeasureMode = false;
             }
 
+            robot.tapeMeasureExtend.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
             if (tapeMeasureMode)
             {
-                robot.tapeMeasureUpDown.setPower(gamepad1.left_stick_y);
-                robot.tapeMeasureRotate.setPower(-gamepad1.right_stick_x);
-                robot.tapeMeasureExtend.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+                robot.tapeMeasureUpDown.setPower(gamepad1.left_stick_y * 0.9);
+                robot.tapeMeasureRotate.setPower(-gamepad1.right_stick_x * 0.7);
             }
             else
             {
@@ -129,6 +129,15 @@ public class BasicDrive extends LinearOpMode {
             robot.arm2.setPower(armPower);
             robot.intake.setPower(INTAKE_POWER * gamepad2.right_stick_y);
             robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
+            if(gamepad2.triangle)
+            {
+                robot.armHold.setPosition(1);
+            }
+
+            if(gamepad2.square)
+            {
+                robot.armHold.setPosition(0);
+            }
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
