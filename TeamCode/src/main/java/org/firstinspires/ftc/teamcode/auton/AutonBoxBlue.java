@@ -33,8 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.vision.ShippingElementDetectorPipeline;
-import org.firstinspires.ftc.teamcode.vision.ShippingElementDetectorPipeline.ShippingElementPosition;
+import org.firstinspires.ftc.teamcode.vision.pipeline.ShippingElementDetectorPipeline;
+import org.firstinspires.ftc.teamcode.vision.pipeline.ShippingElementDetectorPipeline.ShippingElementPosition;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
