@@ -1,3 +1,13 @@
+package org.firstinspires.ftc.teamcode.teleop;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.LameDriveBot;
+
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,12 +37,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -48,22 +52,18 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
+
 @SuppressWarnings("FieldCanBeLocal")
-@TeleOp(name="Basic Drive")
+@TeleOp(name="Training Wheels")
 //@Disabled
-public class BasicDrive extends LinearOpMode {
+public class TrainingWheels extends LinearOpMode {
 
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
-    private final OurBot robot = new OurBot();
-    private double basePower = 0.8;
-    private boolean tapeMeasureMode = false;
+    private final LameDriveBot robot = new LameDriveBot();
+    private double basePower;
 
-    private final double FAST_DRIVE_POWER = 0.8;
-    private final double SLOW_DRIVE_POWER = 0.5;
-    private final double ARM_POWER = 0.4;
-    private final double INTAKE_POWER = 0.8;
-    private final double DUCK_SPINNER_POWER = 0.5;
+    private final double DRIVE_POWER = 0.15;
 
     @Override
     public void runOpMode() {
@@ -77,72 +77,31 @@ public class BasicDrive extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        robot.armHold.setPosition(0);
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive())
         {
-            // Adjust power
-            if (gamepad1.dpad_left)
-            {
-                basePower = SLOW_DRIVE_POWER;
-            }
-            else if (gamepad1.dpad_right)
-            {
-                basePower = FAST_DRIVE_POWER;
-            }
+            // Setup a variable for each drive wheel
+            double leftPower;
+            double rightPower;
 
-            if (gamepad1.triangle)
-            {
-                tapeMeasureMode = true;
-            }
-            else if (gamepad1.square)
-            {
-                tapeMeasureMode = false;
-            }
+            double drive = -gamepad1.left_stick_y;
+            double turn = gamepad1.right_stick_x;
+            leftPower = Range.clip(drive + turn, -1.0, 1.0);
+            rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
-            robot.tapeMeasureExtend.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
-            if (tapeMeasureMode)
-            {
-                robot.tapeMeasureUpDown.setPower(gamepad1.left_stick_y * 0.9);
-                robot.tapeMeasureRotate.setPower(-gamepad1.right_stick_x * 0.7);
-            }
-            else
-            {
-                // Drive
-                double drive = gamepad1.left_stick_y;
-                double turn = -gamepad1.right_stick_x;
-                double leftPower = Range.clip(drive + turn, -1.0, 1.0);
-                double rightPower = Range.clip(drive - turn, -1.0, 1.0);
-                leftPower *= basePower;
-                rightPower *= basePower;
+            basePower = DRIVE_POWER;
+            leftPower *= basePower;
+            rightPower *= basePower;
 
-                robot.leftFront.setPower(leftPower);
-                robot.leftBack.setPower(leftPower);
-                robot.rightFront.setPower(rightPower);
-                robot.rightBack.setPower(rightPower);
-            }
-
-            // Controller 2 controls
-            double armPower = ARM_POWER * gamepad2.left_stick_y;
-            robot.arm1.setPower(armPower);
-            robot.arm2.setPower(armPower);
-            robot.intake.setPower(INTAKE_POWER * gamepad2.right_stick_y);
-            robot.duckSpinner.setPower(DUCK_SPINNER_POWER * (gamepad2.left_trigger - gamepad2.right_trigger));
-            if(gamepad2.triangle)
-            {
-                robot.armHold.setPosition(1);
-            }
-
-            if(gamepad2.square)
-            {
-                robot.armHold.setPosition(0);
-            }
+            // Send calculated power to wheels
+            robot.leftFront.setPower(leftPower);
+            robot.leftBack.setPower(leftPower);
+            robot.rightFront.setPower(rightPower);
+            robot.rightBack.setPower(rightPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Power", basePower);
-            telemetry.addData("Mode", tapeMeasureMode ? "Tape Measure" : "Drive");
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
 
             // Sleep to make the loop have more consistent timing
