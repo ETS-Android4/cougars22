@@ -39,28 +39,33 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * This is NOT an opmode.
  *
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
+ * This class is used to define all the hardware for our 2021-2022 robot.
  *
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- *
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
- */
+ * */
 public class OurBot
 {
+    /** Encoder counts per motor revolution, usually found in the motor's datasheet */
     public static final double COUNTS_PER_MOTOR_REV = 28;    // REV Ultraplanetary
-    public static final double DRIVE_GEAR_REDUCTION = 2.89 * 3.61;     // This is < 1.0 if geared UP
-    public static final double WHEEL_DIAMETER_INCHES = 3.54330709;     // For figuring circumference
+    /**
+     * The gear ratio for the motor, in this case for two of the REV Ultraplanetary gearboxes
+     * Notice that they are weird numbers, despite the gearboxes having integer ratios listed on them
+     * ALWAYS check the gearbox datasheet for the true gear ratios, just in case
+     * */
+    public static final double DRIVE_GEAR_REDUCTION = 2.89 * 3.61;
+    /** Wheel diameter in inches, try to be as precise as possible */
+    public static final double WHEEL_DIAMETER_INCHES = 3.54330709;
+    /**
+     * Encoder counts per inch the robot moves
+     * This is what's actually used to calculate how much the motors should turn
+     */
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * Math.PI) * -1; // Negated because the encoders are backwards for some reason
 
-    /* Public OpMode members. */
+    /*
+     * Defining the motors and servos
+     * By defining them as variables in this class, we can use them throughout our project,
+     * with autocomplete, without having to know the string device names
+     */
     public DcMotor  leftFront           = null;
     public DcMotor  leftBack            = null;
     public DcMotor  rightFront          = null;
@@ -75,19 +80,11 @@ public class OurBot
     public CRServo  tapeMeasureUpDown   = null;
     public CRServo  tapeMeasureExtend   = null;
 
-    /* local OpMode members. */
-    HardwareMap hwMap           = null;
-
-    /* Constructor */
-    public OurBot(){
-
-    }
-
-    /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
-        // Save reference to Hardware map
-        hwMap = ahwMap;
-
+    /**
+     * Initialize all the hardware, and set static settings like motor direction and running with encoders
+     * @param hwMap The HardwareMap to use to initialize the robot
+     */
+    public void init(HardwareMap hwMap) {
         // Define Motors
         leftFront           = hwMap.get(DcMotor.class, "leftFront");
         leftBack            = hwMap.get(DcMotor.class, "leftBack");
@@ -102,7 +99,7 @@ public class OurBot
         tapeMeasureUpDown   = hwMap.get(CRServo.class, "tapeMeasureUpDown");
         tapeMeasureExtend   = hwMap.get(CRServo.class, "tapeMeasureExtend");
 
-        //Initialize Motor Direction
+        // Initialize Motor Direction
         leftFront.setDirection(Direction.REVERSE);
         leftBack.setDirection(Direction.REVERSE);
         rightFront.setDirection(Direction.FORWARD);
@@ -112,7 +109,7 @@ public class OurBot
         intake.setDirection(Direction.REVERSE);
         duckSpinner.setDirection(Direction.FORWARD);
 
-        //Set all motors to zero power
+        // Set all motors to zero power
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightFront.setPower(0);
@@ -122,17 +119,15 @@ public class OurBot
         intake.setPower(0);
         duckSpinner.setPower(0);
 
-        //Reset all encoders
+        // Reset all encoders
         leftFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(RunMode.STOP_AND_RESET_ENCODER);
         rightBack.setMode(RunMode.STOP_AND_RESET_ENCODER);
         arm1.setMode(RunMode.STOP_AND_RESET_ENCODER);
         arm2.setMode(RunMode.STOP_AND_RESET_ENCODER);
-        //intake.setMode(RunMode.STOP_AND_RESET_ENCODER);
-        //duckSpinner.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
-        //Set motors to run with encoder
+        // Set motors to run with encoder
         leftFront.setMode(RunMode.RUN_USING_ENCODER);
         leftBack.setMode(RunMode.RUN_USING_ENCODER);
         rightFront.setMode(RunMode.RUN_USING_ENCODER);
@@ -140,7 +135,7 @@ public class OurBot
         arm1.setMode(RunMode.RUN_USING_ENCODER);
         arm2.setMode(RunMode.RUN_USING_ENCODER);
 
-        //Intake and Duck Spinner don't have encoders
+        // Intake and Duck Spinner don't have encoders
         duckSpinner.setMode(RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(RunMode.RUN_WITHOUT_ENCODER);
     }

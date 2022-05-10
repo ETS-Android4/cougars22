@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.pipeline;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;

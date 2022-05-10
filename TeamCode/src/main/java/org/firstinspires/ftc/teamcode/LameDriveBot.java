@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+/**
+ * This is an alternate hardware class that only defines the drive motors,
+ * used when the arm was still under construction and not plugged in.
+ */
 public class LameDriveBot
 {
     /* Public OpMode members. */

@@ -3,33 +3,42 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Op mode for testing the connection and direction of motors
+ * Use dpad up and down to adjust power and left and right to select a motor
+ * Move the left joystick up and down to run the motor
+ * NOTE: This does not respect the motor directions set in OurRobot, all motors are set to run forwards
+ */
 @TeleOp(name="Motor Test")
 public class MotorTest extends LinearOpMode
 {
     private double power = 0.5;
     private double lastPowerChangeTime;
+    private final ElapsedTime runtime = new ElapsedTime();
     private int motorIndex = 0;
     private boolean leftDownLastFrame = false;
     private boolean rightDownLastFrame = false;
-    private final ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode()
     {
+        // Get all the motors and do basic setup on each one
         List<DcMotor> motors = hardwareMap.getAll(DcMotor.class);
         List<String> motorNames = new ArrayList<>();
         for (DcMotor motor : motors)
         {
             motorNames.add(hardwareMap.getNamesOf(motor).iterator().next());
-            motor.setDirection(DcMotorSimple.Direction.FORWARD);
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motor.setDirection(Direction.FORWARD);
+            motor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(RunMode.RUN_USING_ENCODER);
         }
         telemetry.addData(">", "Robot Ready");
         telemetry.update();
@@ -54,6 +63,7 @@ public class MotorTest extends LinearOpMode
                 }
             }
 
+            // Previous motor
             if (gamepad1.dpad_left)
             {
                 if (!leftDownLastFrame)
@@ -67,6 +77,7 @@ public class MotorTest extends LinearOpMode
                 leftDownLastFrame = false;
             }
 
+            // Next motor
             if (gamepad1.dpad_right)
             {
                 if (!rightDownLastFrame)
@@ -80,9 +91,11 @@ public class MotorTest extends LinearOpMode
                 rightDownLastFrame = false;
             }
 
+            // Actually turn the selected motor
             DcMotor currMotor = motors.get(motorIndex);
             currMotor.setPower(gamepad1.left_stick_y * power);
 
+            // Display the current motor name, encoder position, and power
             telemetry.addData("Motor", motorNames.get(motorIndex));
             telemetry.addData("Motor Position", currMotor.getCurrentPosition());
             telemetry.addData("Power", power);
